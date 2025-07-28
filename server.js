@@ -22,12 +22,6 @@ connectDB();
 console.log('🔍 Checking MongoDB connection...');
 console.log('📊 Database URL:', process.env.MONGODB_URI || 'mongodb://localhost:27017/cherry-picker');
 
-// Auth routes
-app.use('/api/auth', authRoutes);
-
-// Brand request routes
-app.use('/api/brand-requests', authenticateToken, brandRequestRoutes);
-
 // Authentication middleware
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -51,6 +45,12 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// Brand request routes
+app.use('/api/brand-requests', authenticateToken, brandRequestRoutes);
 
 // Load brands configuration
 const configPath = path.join(__dirname, 'brands-config.json');
