@@ -62,6 +62,9 @@ const SALE_CATEGORIES = config.saleCategories;
 const countryConfigPath = path.join(__dirname, 'src', 'country-config.json');
 const countryConfig = JSON.parse(fs.readFileSync(countryConfigPath, 'utf8'));
 
+// Track failed brands to avoid retries in the same session
+const failedBrands = new Set();
+
 // Function to detect sale category based on text
 function detectSaleCategory(text) {
   const lowerText = text.toLowerCase();
@@ -116,9 +119,14 @@ function extractSalePercentage(text) {
 async function scrapeBrand(brandKey, brandConfig) {
   try {
     // Skip brands that consistently timeout or block requests
-    const blockedBrands = ['cos', 'arket', 'otherstories', 'h&m'];
-    if (blockedBrands.includes(brandKey)) {
-      console.log(`Skipping ${brandConfig.name} - known to block requests`);
+    const blockedBrands = [
+      'cos', 'arket', 'otherstories', 'h&m', 'madewell', 'uniqlo', 'mango',
+      'ganni', 'acnestudios', 'theory', 'massimodutti', 'nanushka'
+    ];
+    
+    // Check if brand is in blocked list or has failed in this session
+    if (blockedBrands.includes(brandKey) || failedBrands.has(brandKey)) {
+      console.log(`Skipping ${brandConfig.name} - known to block requests or previously failed`);
       return {
         brandKey,
         brandName: brandConfig.name,
@@ -313,7 +321,10 @@ async function scrapeBrand(brandKey, brandConfig) {
       errorMessage = 'Connection refused';
     }
     
+    // Add brand to failed brands set to avoid retries
+    failedBrands.add(brandKey);
     console.error(`Error scraping ${brandConfig.name}:`, errorMessage);
+    
     return {
       brandKey,
       brandName: brandConfig.name,
@@ -327,9 +338,12 @@ async function scrapeBrand(brandKey, brandConfig) {
   }
 }
 
-// API endpoint to get all brands' sale data
+// API endpoint to get all brands' sale data with streaming support
 app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
   try {
+    // Clear failed brands cache for new session
+    failedBrands.clear();
+    
     const countryCode = req.query.country || 'us';
     const countryData = countryConfig.countries[countryCode];
     
@@ -340,81 +354,175 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
       });
     }
 
-    const results = [];
+    // Check if client wants streaming
+    const streamResults = req.query.stream === 'true';
     
-    // Scrape all brands with optimized parallel processing
-    const brandEntries = Object.entries(BRANDS);
-    const allResults = [];
-    
-    // Process brands in smaller batches to reduce rate limiting
-    const batchSize = 5; // Reduced batch size
-    for (let i = 0; i < brandEntries.length; i += batchSize) {
-      const batch = brandEntries.slice(i, i + batchSize);
-      
-      const batchPromises = batch.map(([brandKey, brandConfig]) => {
-        const countryUrl = countryData.brandUrls[brandKey];
-        const brandConfigWithCountryUrl = {
-          ...brandConfig,
-          url: countryUrl || brandConfig.url // Fallback to original URL if country-specific URL not found
-        };
-        return scrapeBrand(brandKey, brandConfigWithCountryUrl);
+    if (streamResults) {
+      // Set up SSE headers
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Cache-Control'
       });
+
+      const brandEntries = Object.entries(BRANDS);
+      const allResults = [];
+      const categorizedResults = {};
+      categorizedResults['other-sales'] = [];
       
-      const batchResults = await Promise.allSettled(batchPromises);
-      
-      // Process results
-      batchResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
-          allResults.push(result.value);
-        } else {
-          // Create a fallback result for failed requests
-          const brandKey = batch[index][0];
-          const brandConfig = batch[index][1];
-          allResults.push({
-            brandKey,
-            brandName: brandConfig.name,
-            brandUrl: brandConfig.url,
-            saleFound: false,
-            saleText: '',
-            salePercentage: null,
-            saleCategory: null,
-            error: result.reason.message || 'Request failed',
-            timestamp: new Date().toISOString()
-          });
-        }
-      });
-      
-      // Add longer delay between batches to prevent rate limiting
-      if (i + batchSize < brandEntries.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
-      }
-    }
-    
-    // Group results by category - only create categories that have brands
-    const categorizedResults = {};
-    categorizedResults['other-sales'] = [];
-    
-    allResults.forEach(result => {
-      if (result.saleFound) {
-        const category = result.saleCategory;
-        if (category && SALE_CATEGORIES[category]) {
-          if (!categorizedResults[category]) {
-            categorizedResults[category] = [];
+      // Process brands in smaller batches
+      const batchSize = 5;
+      for (let i = 0; i < brandEntries.length; i += batchSize) {
+        const batch = brandEntries.slice(i, i + batchSize);
+        
+        const batchPromises = batch.map(([brandKey, brandConfig]) => {
+          const countryUrl = countryData.brandUrls[brandKey];
+          const brandConfigWithCountryUrl = {
+            ...brandConfig,
+            url: countryUrl || brandConfig.url
+          };
+          return scrapeBrand(brandKey, brandConfigWithCountryUrl);
+        });
+        
+        const batchResults = await Promise.allSettled(batchPromises);
+        
+        // Process and stream results
+        batchResults.forEach((result, index) => {
+          let brandResult;
+          if (result.status === 'fulfilled') {
+            brandResult = result.value;
+          } else {
+            const brandKey = batch[index][0];
+            const brandConfig = batch[index][1];
+            brandResult = {
+              brandKey,
+              brandName: brandConfig.name,
+              brandUrl: brandConfig.url,
+              saleFound: false,
+              saleText: '',
+              salePercentage: null,
+              saleCategory: null,
+              error: result.reason.message || 'Request failed',
+              timestamp: new Date().toISOString()
+            };
           }
-          categorizedResults[category].push(result);
-        } else {
-          categorizedResults['other-sales'].push(result);
+          
+          allResults.push(brandResult);
+          
+          // Stream individual result
+          res.write(`data: ${JSON.stringify({
+            type: 'brand-result',
+            result: brandResult
+          })}\n\n`);
+          
+          // If this brand has sales, also stream categorized result
+          if (brandResult.saleFound) {
+            const category = brandResult.saleCategory;
+            if (category && SALE_CATEGORIES[category]) {
+              if (!categorizedResults[category]) {
+                categorizedResults[category] = [];
+              }
+              categorizedResults[category].push(brandResult);
+            } else {
+              categorizedResults['other-sales'].push(brandResult);
+            }
+            
+            // Stream categorized update
+            res.write(`data: ${JSON.stringify({
+              type: 'categorized-update',
+              categorizedResults: { ...categorizedResults }
+            })}\n\n`);
+          }
+        });
+        
+        // Add delay between batches
+        if (i + batchSize < brandEntries.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
-    });
-    
-    res.json({
-      success: true,
-      results: allResults,
-      categorizedResults,
-      country: countryCode,
-      timestamp: new Date().toISOString()
-    });
+      
+      // Send completion signal
+      res.write(`data: ${JSON.stringify({
+        type: 'complete',
+        results: allResults,
+        categorizedResults,
+        country: countryCode,
+        timestamp: new Date().toISOString()
+      })}\n\n`);
+      
+      res.end();
+    } else {
+      // Original non-streaming implementation
+      const brandEntries = Object.entries(BRANDS);
+      const allResults = [];
+      
+      const batchSize = 5;
+      for (let i = 0; i < brandEntries.length; i += batchSize) {
+        const batch = brandEntries.slice(i, i + batchSize);
+        
+        const batchPromises = batch.map(([brandKey, brandConfig]) => {
+          const countryUrl = countryData.brandUrls[brandKey];
+          const brandConfigWithCountryUrl = {
+            ...brandConfig,
+            url: countryUrl || brandConfig.url
+          };
+          return scrapeBrand(brandKey, brandConfigWithCountryUrl);
+        });
+        
+        const batchResults = await Promise.allSettled(batchPromises);
+        
+        batchResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            allResults.push(result.value);
+          } else {
+            const brandKey = batch[index][0];
+            const brandConfig = batch[index][1];
+            allResults.push({
+              brandKey,
+              brandName: brandConfig.name,
+              brandUrl: brandConfig.url,
+              saleFound: false,
+              saleText: '',
+              salePercentage: null,
+              saleCategory: null,
+              error: result.reason.message || 'Request failed',
+              timestamp: new Date().toISOString()
+            });
+          }
+        });
+        
+        if (i + batchSize < brandEntries.length) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      
+      const categorizedResults = {};
+      categorizedResults['other-sales'] = [];
+      
+      allResults.forEach(result => {
+        if (result.saleFound) {
+          const category = result.saleCategory;
+          if (category && SALE_CATEGORIES[category]) {
+            if (!categorizedResults[category]) {
+              categorizedResults[category] = [];
+            }
+            categorizedResults[category].push(result);
+          } else {
+            categorizedResults['other-sales'].push(result);
+          }
+        }
+      });
+      
+      res.json({
+        success: true,
+        results: allResults,
+        categorizedResults,
+        country: countryCode,
+        timestamp: new Date().toISOString()
+      });
+    }
 
   } catch (error) {
     console.error('Error scraping all brands:', error.message);

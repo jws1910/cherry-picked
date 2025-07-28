@@ -542,6 +542,33 @@ body {
   text-align: center;
 }
 
+.partial-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(128, 0, 32, 0.1);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.partial-loading .loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #800020;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.partial-loading p {
+  margin: 0;
+  color: #800020;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .no-data-message {
   text-align: center;
   padding: 3rem;

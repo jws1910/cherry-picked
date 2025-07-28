@@ -16,6 +16,7 @@ import AdminPanel from './AdminPanel';
 
 function App() {
   const [allSalesData, setAllSalesData] = useState(null);
+  const [partialResults, setPartialResults] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
@@ -30,28 +31,83 @@ function App() {
   const checkAllSales = async () => {
     setLoading(true);
     setError(null);
+    setPartialResults(null);
     
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await axios.get(`http://localhost:3001/api/check-all-sales?country=${selectedCountry}`, {
+      
+      // Use streaming API to get results incrementally
+      const response = await fetch(`http://localhost:3001/api/check-all-sales?country=${selectedCountry}&stream=true`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        },
-        timeout: 120000 // 2 minutes timeout for the entire request
+        }
       });
 
-      if (response.data.success) {
-        setAllSalesData(response.data);
-        setLastRefresh(new Date());
-      } else {
-        setError('Failed to fetch sales data. Please try again.');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.type === 'brand-result') {
+                // Add individual brand result to partial results
+                setPartialResults(prev => {
+                  if (!prev) {
+                    return {
+                      results: [data.result],
+                      categorizedResults: {},
+                      country: selectedCountry,
+                      timestamp: new Date().toISOString()
+                    };
+                  }
+                  return {
+                    ...prev,
+                    results: [...prev.results, data.result]
+                  };
+                });
+              } else if (data.type === 'categorized-update') {
+                // Update categorized results
+                setPartialResults(prev => {
+                  if (!prev) return prev;
+                  return {
+                    ...prev,
+                    categorizedResults: data.categorizedResults
+                  };
+                });
+              } else if (data.type === 'complete') {
+                // Final complete result
+                setAllSalesData(data);
+                setPartialResults(null);
+                setLastRefresh(new Date());
+                setLoading(false);
+                return;
+              }
+            } catch (error) {
+              console.error('Error parsing SSE data:', error);
+            }
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching sales data:', error);
-      if (error.code === 'ECONNABORTED') {
-        setError('Request timed out. The process is taking longer than expected. Please try again.');
-      } else if (error.response?.status === 401) {
-        setError('Authentication failed. Please log in again.');
+      if (error.name === 'AbortError') {
+        setError('Request was cancelled.');
       } else {
         setError('Failed to fetch sales data. Please try again.');
       }
@@ -310,13 +366,13 @@ function App() {
 
             <YourBrands user={user} onUpdateUser={handleUpdateUser} />
             
-            {loading ? (
+            {loading && !partialResults ? (
               <div className="loading-spinner-container">
                 <div className="loading-spinner"></div>
                 <p className="loading-text">Checking all brands for sales...</p>
                 <p className="loading-subtext">This may take a few minutes</p>
               </div>
-            ) : allSalesData ? (
+            ) : (allSalesData || partialResults) ? (
               <>
                 <SaleTypeMenu 
                   selectedSaleType={selectedSaleType} 
@@ -329,13 +385,20 @@ function App() {
                   </div>
                 )}
 
+                {loading && partialResults && (
+                  <div className="partial-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Still checking for more sales...</p>
+                  </div>
+                )}
+
                 {lastRefresh && (
                   <div className="last-refresh">
                     Last updated: {lastRefresh.toLocaleTimeString()}
                   </div>
                 )}
 
-                {Object.entries(allSalesData.categorizedResults).map(([category, sales]) => {
+                {Object.entries((allSalesData || partialResults).categorizedResults).map(([category, sales]) => {
                   if (selectedSaleType !== 'all' && category !== selectedSaleType) {
                     return null;
                   }
@@ -367,12 +430,12 @@ function App() {
           {allSalesData && (
             <div className="sale-results">
               {/* Your Brands with Sale Status */}
-              {user && user.favoriteBrands && user.favoriteBrands.length > 0 && allSalesData?.results && (
+              {user && user.favoriteBrands && user.favoriteBrands.length > 0 && (allSalesData || partialResults)?.results && (
                 <div className="sale-section">
                   <h2 className="section-title">Your Brands</h2>
                   <div className="brands-grid">
                     {user.favoriteBrands.map(brandKey => {
-                      const brandData = allSalesData.results.find(
+                      const brandData = (allSalesData || partialResults).results.find(
                         result => result.brandKey === brandKey
                       );
                       if (brandData) {
