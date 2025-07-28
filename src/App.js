@@ -233,23 +233,44 @@ function App() {
       <HeroBanner allSalesData={allSalesData} />
       
       <header className="App-header">
-        <div className="header-top">
-          <div className="logo-container">
-            <img src="/logo.png" alt="cherry-picker" className="app-logo" />
-          </div>
-          <div className="brand-name-center">
-            <h1 className="app-brand-name">cherry-picked</h1>
-          </div>
+        {selectedCountry ? (
+          <>
+            <div className="header-top">
+              <div className="logo-container">
+                <img src="/logo.png" alt="cherry-picker" className="app-logo" />
+              </div>
+              <div className="brand-name-center">
+                <h1 className="app-brand-name">cherry-picked</h1>
+              </div>
+              <div className="header-actions">
+                <button 
+                  className="country-change-btn"
+                  onClick={handleCountryChange}
+                  title="Change country"
+                >
+                  {countryConfig.countries[selectedCountry]?.flag || '🇺🇸'} {countryConfig.countries[selectedCountry]?.name || 'United States'}
+                </button>
+                <button 
+                  className="logout-btn"
+                  onClick={handleLogout}
+                  title="Logout"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+            <p>Your Curated Compass for Fashion Sales</p>
+            <div className="refresh-info">
+              <span>Auto-refresh every 24 hours</span>
+              {lastRefresh && (
+                <span className="last-refresh">
+                  Last updated: {lastRefresh.toLocaleString()}
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
           <div className="header-actions">
-            {selectedCountry && (
-              <button 
-                className="country-change-btn"
-                onClick={handleCountryChange}
-                title="Change country"
-              >
-                {countryConfig.countries[selectedCountry]?.flag || '🇺🇸'} {countryConfig.countries[selectedCountry]?.name || 'United States'}
-              </button>
-            )}
             <button 
               className="logout-btn"
               onClick={handleLogout}
@@ -258,16 +279,7 @@ function App() {
               Logout
             </button>
           </div>
-        </div>
-        <p>Your Curated Compass for Fashion Sales</p>
-        <div className="refresh-info">
-          <span>Auto-refresh every 24 hours</span>
-          {lastRefresh && (
-            <span className="last-refresh">
-              Last updated: {lastRefresh.toLocaleString()}
-            </span>
-          )}
-        </div>
+        )}
         
         {user && !selectedCountry && (
           <CountrySelector onCountrySelect={handleCountrySelect} />
