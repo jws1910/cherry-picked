@@ -241,13 +241,15 @@ function App() {
             <h1 className="app-brand-name">cherry-picked</h1>
           </div>
           <div className="header-actions">
-            <button 
-              className="country-change-btn"
-              onClick={handleCountryChange}
-              title="Change country"
-            >
-              {countryConfig.countries[selectedCountry]?.flag || selectedCountry.toUpperCase()} {countryConfig.countries[selectedCountry]?.name || selectedCountry.toUpperCase()}
-            </button>
+            {selectedCountry && (
+              <button 
+                className="country-change-btn"
+                onClick={handleCountryChange}
+                title="Change country"
+              >
+                {countryConfig.countries[selectedCountry]?.flag || '🇺🇸'} {countryConfig.countries[selectedCountry]?.name || 'United States'}
+              </button>
+            )}
             <button 
               className="logout-btn"
               onClick={handleLogout}
@@ -274,7 +276,7 @@ function App() {
         {user && selectedCountry && !showLoadingPage && (
           <>
             <div className="country-header">
-              <h2>Sales in {countryConfig.countries[selectedCountry]?.name || selectedCountry.toUpperCase()}</h2>
+              <h2>Sales in {countryConfig.countries[selectedCountry]?.name || 'United States'}</h2>
               <button onClick={handleCountryChange} className="change-country-btn">
                 Change Country
               </button>
@@ -335,31 +337,16 @@ function App() {
       <main className="App-main">
         <div className="sale-checker">
           
-          {/* Your Brands Section */}
-                      <YourBrands user={user} onUpdateUser={handleUpdateUser} />
-            
-            {loading && (
-              <div className="loading-spinner-container">
-                <div className="loading-spinner"></div>
-                <p className="loading-text">Checking all brands for sales...</p>
-              </div>
-            )}
-          
-          {error && (
-            <div className="error-message">
-              {error}
-            </div>
-          )}
-          
+          {/* Sales Results */}
           {allSalesData && (
             <div className="sale-results">
               {/* Your Brands with Sale Status */}
-              {user.favoriteBrands && user.favoriteBrands.length > 0 && allSalesData?.allResults && (
+              {user && user.favoriteBrands && user.favoriteBrands.length > 0 && allSalesData?.results && (
                 <div className="sale-section">
                   <h2 className="section-title">Your Brands</h2>
                   <div className="brands-grid">
                     {user.favoriteBrands.map(brandKey => {
-                      const brandData = allSalesData.allResults.find(
+                      const brandData = allSalesData.results.find(
                         result => result.brandKey === brandKey
                       );
                       if (brandData) {
