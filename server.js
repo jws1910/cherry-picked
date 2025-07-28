@@ -121,12 +121,27 @@ async function scrapeBrand(brandKey, brandConfig) {
     // Skip brands that consistently timeout or block requests
     const blockedBrands = [
       'cos', 'arket', 'otherstories', 'h&m', 'madewell', 'uniqlo', 'mango',
-      'ganni', 'acnestudios', 'theory', 'massimodutti', 'nanushka'
+      'ganni', 'acne', 'theory', 'massimodutti', 'nanushka'
     ];
     
     // Check if brand is in blocked list or has failed in this session
-    if (blockedBrands.includes(brandKey) || failedBrands.has(brandKey)) {
-      console.log(`Skipping ${brandConfig.name} - known to block requests or previously failed`);
+    if (blockedBrands.includes(brandKey)) {
+      console.log(`Skipping ${brandConfig.name} (${brandKey}) - known to block requests`);
+      return {
+        brandKey,
+        brandName: brandConfig.name,
+        brandUrl: brandConfig.url,
+        saleFound: false,
+        saleText: '',
+        salePercentage: null,
+        saleCategory: null,
+        error: 'Website blocks automated requests',
+        timestamp: new Date().toISOString()
+      };
+    }
+    
+    if (failedBrands.has(brandKey)) {
+      console.log(`Skipping ${brandConfig.name} (${brandKey}) - previously failed in this session`);
       return {
         brandKey,
         brandName: brandConfig.name,
@@ -323,7 +338,8 @@ async function scrapeBrand(brandKey, brandConfig) {
     
     // Add brand to failed brands set to avoid retries
     failedBrands.add(brandKey);
-    console.error(`Error scraping ${brandConfig.name}:`, errorMessage);
+    console.error(`Error scraping ${brandConfig.name} (${brandKey}):`, errorMessage);
+    console.log(`Added ${brandKey} to failed brands set. Total failed brands: ${failedBrands.size}`);
     
     return {
       brandKey,
@@ -343,6 +359,7 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
   try {
     // Clear failed brands cache for new session
     failedBrands.clear();
+    console.log('Cleared failed brands cache for new scraping session');
     
     const countryCode = req.query.country || 'us';
     const countryData = countryConfig.countries[countryCode];
