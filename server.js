@@ -7,6 +7,7 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
+const brandRequestRoutes = require('./routes/brandRequests');
 
 const app = express();
 const PORT = 3001;
@@ -23,6 +24,9 @@ console.log('📊 Database URL:', process.env.MONGODB_URI || 'mongodb://localhos
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Brand request routes
+app.use('/api/brand-requests', authenticateToken, brandRequestRoutes);
 
 // Authentication middleware
 const authenticateToken = (req, res, next) => {

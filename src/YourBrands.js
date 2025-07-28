@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './YourBrands.css';
+import axios from 'axios';
 import brandsConfig from './brands-config.json';
+import './YourBrands.css';
 
 const YourBrands = ({ user, onUpdateUser }) => {
   const [selectedBrands, setSelectedBrands] = useState(user?.favoriteBrands || []);
@@ -50,16 +51,33 @@ const YourBrands = ({ user, onUpdateUser }) => {
     }
   };
 
-  const handleAddBrand = () => {
+  const handleAddBrand = async () => {
     if (newBrandName.trim() && newBrandWebsite.trim()) {
-      // For now, we'll just show an alert to notify admin
-      // In a real implementation, this would send a request to the backend
-      alert(`Brand request submitted!\n\nBrand Name: ${newBrandName.trim()}\nWebsite: ${newBrandWebsite.trim()}\n\nAn admin will be notified to add the logo to the website.`);
-      
-      // Reset form
-      setNewBrandName('');
-      setNewBrandWebsite('');
-      setShowAddBrandModal(false);
+      try {
+        const authToken = localStorage.getItem('authToken');
+        const response = await axios.post('http://localhost:3001/api/brand-requests/submit', {
+          brandName: newBrandName.trim(),
+          brandWebsite: newBrandWebsite.trim()
+        }, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.data.success) {
+          alert('Brand request submitted successfully! An admin will review your request.');
+          // Reset form
+          setNewBrandName('');
+          setNewBrandWebsite('');
+          setShowAddBrandModal(false);
+        } else {
+          alert('Failed to submit brand request. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error submitting brand request:', error);
+        alert('Error submitting brand request. Please try again.');
+      }
     } else {
       alert('Please fill in both brand name and website.');
     }

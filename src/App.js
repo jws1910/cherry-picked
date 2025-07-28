@@ -12,6 +12,7 @@ import SearchBar from './SearchBar';
 import HeroBanner from './HeroBanner';
 import LoadingPage from './LoadingPage';
 import SaleTypeMenu from './SaleTypeMenu';
+import AdminPanel from './AdminPanel';
 
 function App() {
   const [allSalesData, setAllSalesData] = useState(null);
@@ -24,6 +25,7 @@ function App() {
   const [selectedCountry, setSelectedCountry] = useState(() => {
     return localStorage.getItem('selectedCountry') || null;
   });
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   const checkAllSales = async () => {
     setLoading(true);
@@ -227,6 +229,11 @@ function App() {
     return <Login onLogin={handleLogin} />;
   }
 
+  // Show admin panel if requested
+  if (showAdminPanel) {
+    return <AdminPanel onBack={() => setShowAdminPanel(false)} />;
+  }
+
   return (
     <div className="App">
       {/* Hero Banner at the very top */}
@@ -271,6 +278,13 @@ function App() {
           </>
         ) : (
           <div className="header-actions">
+            <button 
+              className="admin-btn"
+              onClick={() => setShowAdminPanel(true)}
+              title="Admin Panel"
+            >
+              Admin
+            </button>
             <button 
               className="logout-btn"
               onClick={handleLogout}
