@@ -9,28 +9,83 @@ const YourBrands = ({ user, onUpdateUser }) => {
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newBrandWebsite, setNewBrandWebsite] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Load favorite brands from database on component mount
   useEffect(() => {
-    // Update user's favorite brands in localStorage
-    if (user) {
-      const updatedUser = { ...user, favoriteBrands: selectedBrands };
-      localStorage.setItem('cherryUser', JSON.stringify(updatedUser));
-      onUpdateUser(updatedUser);
+    const loadFavoriteBrands = async () => {
+      if (user) {
+        try {
+          const authToken = localStorage.getItem('authToken');
+          const response = await axios.get('http://localhost:3001/api/auth/favorite-brands', {
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+
+          if (response.data.success) {
+            setSelectedBrands(response.data.favoriteBrands);
+            // Update user object with favorite brands from database
+            const updatedUser = { ...user, favoriteBrands: response.data.favoriteBrands };
+            onUpdateUser(updatedUser);
+          }
+        } catch (error) {
+          console.error('Error loading favorite brands:', error);
+        }
+      }
+    };
+
+    loadFavoriteBrands();
+  }, [user, onUpdateUser]);
+
+  // Save favorite brands to database
+  const saveFavoriteBrands = async (brands) => {
+    try {
+      setLoading(true);
+      const authToken = localStorage.getItem('authToken');
+      const response = await axios.post('http://localhost:3001/api/auth/favorite-brands', {
+        favoriteBrands: brands
+      }, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data.success) {
+        // Update user object with new favorite brands
+        const updatedUser = { ...user, favoriteBrands: brands };
+        onUpdateUser(updatedUser);
+      } else {
+        console.error('Failed to save favorite brands');
+      }
+    } catch (error) {
+      console.error('Error saving favorite brands:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [selectedBrands, user, onUpdateUser]);
+  };
 
   const handleBrandToggle = (brandKey) => {
+    let newSelectedBrands;
     if (selectedBrands.includes(brandKey)) {
-      setSelectedBrands(selectedBrands.filter(brand => brand !== brandKey));
+      newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
     } else if (selectedBrands.length < 5) {
-      setSelectedBrands([...selectedBrands, brandKey]);
+      newSelectedBrands = [...selectedBrands, brandKey];
+    } else {
+      return; // Don't add if already at limit
     }
+    
+    setSelectedBrands(newSelectedBrands);
+    saveFavoriteBrands(newSelectedBrands);
   };
 
 
 
   const removeBrand = (brandKey) => {
-    setSelectedBrands(selectedBrands.filter(brand => brand !== brandKey));
+    const newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
+    setSelectedBrands(newSelectedBrands);
+    saveFavoriteBrands(newSelectedBrands);
   };
 
   const getBrandName = (brandKey) => {
@@ -108,8 +163,9 @@ const YourBrands = ({ user, onUpdateUser }) => {
           className="manage-brands-btn"
           onClick={() => setShowBrandSelector(!showBrandSelector)}
           type="button"
+          disabled={loading}
         >
-          {showBrandSelector ? 'Done' : 'Manage Brands'}
+          {loading ? 'Saving...' : (showBrandSelector ? 'Done' : 'Manage Brands')}
         </button>
       </div>
 

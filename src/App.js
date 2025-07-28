@@ -130,9 +130,29 @@ function App() {
     setError(null);
   };
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    setShowLoadingPage(true);
+  const handleLogin = async (userData) => {
+    try {
+      // Load complete user profile from database
+      const authToken = localStorage.getItem('authToken');
+      const response = await axios.get('http://localhost:3001/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (response.data.success) {
+        setUser(response.data.user);
+        setShowLoadingPage(true);
+      } else {
+        console.error('Failed to load user profile');
+        setUser(userData); // Fallback to login data
+        setShowLoadingPage(true);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setUser(userData); // Fallback to login data
+      setShowLoadingPage(true);
+    }
   };
 
   const handleLogout = () => {
