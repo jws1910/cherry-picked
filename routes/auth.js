@@ -1,6 +1,31 @@
 const express = require('express');
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
+
+// Authentication middleware
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Access token required' 
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
+    if (err) {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Invalid or expired token' 
+      });
+    }
+    req.user = user;
+    next();
+  });
+};
 
 // Register endpoint
 router.post('/register', async (req, res) => {
@@ -176,7 +201,7 @@ router.get('/profile', async (req, res) => {
 });
 
 // Save favorite brands
-router.post('/favorite-brands', async (req, res) => {
+router.post('/favorite-brands', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const { favoriteBrands } = req.body;
@@ -223,7 +248,7 @@ router.post('/favorite-brands', async (req, res) => {
 });
 
 // Get favorite brands
-router.get('/favorite-brands', async (req, res) => {
+router.get('/favorite-brands', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const user = await User.findById(userId);

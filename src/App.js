@@ -367,10 +367,14 @@ function App() {
                     return null;
                   }
                   
-                  return renderSaleSection(
-                    getCategoryDisplayName(category),
-                    sales,
-                    category
+                  return (
+                    <div key={category}>
+                      {renderSaleSection(
+                        getCategoryDisplayName(category),
+                        sales,
+                        category
+                      )}
+                    </div>
                   );
                 })}
               </>
@@ -414,13 +418,15 @@ function App() {
                 </div>
               )}
               
-              {allSalesData?.categorizedResults && Object.entries(allSalesData.categorizedResults).map(([categoryKey, sales]) => 
-                renderSaleSection(
-                  getCategoryDisplayName(categoryKey),
-                  sales,
-                  categoryKey
-                )
-              )}
+              {allSalesData?.categorizedResults && Object.entries(allSalesData.categorizedResults).map(([categoryKey, sales]) => (
+                <div key={categoryKey}>
+                  {renderSaleSection(
+                    getCategoryDisplayName(categoryKey),
+                    sales,
+                    categoryKey
+                  )}
+                </div>
+              ))}
               
               {allSalesData?.categorizedResults && Object.values(allSalesData.categorizedResults).every(sales => !sales || sales.length === 0) && (
                 <div className="no-sales">
