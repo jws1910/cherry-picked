@@ -111,12 +111,25 @@ function extractSalePercentage(text) {
 // Function to scrape a single brand
 async function scrapeBrand(brandKey, brandConfig) {
   try {
-    // Add specific handling for known problematic brands
-    const problematicBrands = ['cos', 'arket', 'otherstories', 'h&m'];
-    const isProblematic = problematicBrands.includes(brandKey);
+    // Skip brands that consistently timeout or block requests
+    const blockedBrands = ['cos', 'arket', 'otherstories', 'h&m'];
+    if (blockedBrands.includes(brandKey)) {
+      console.log(`Skipping ${brandConfig.name} - known to block requests`);
+      return {
+        brandKey,
+        brandName: brandConfig.name,
+        brandUrl: brandConfig.url,
+        saleFound: false,
+        saleText: '',
+        salePercentage: null,
+        saleCategory: null,
+        error: 'Website blocks automated requests',
+        timestamp: new Date().toISOString()
+      };
+    }
     
-    // Use shorter timeout for faster processing
-    const timeout = isProblematic ? 8000 : 12000;
+    // Use consistent timeout for all brands
+    const timeout = 15000; // 15 seconds
     
     const response = await axios.get(brandConfig.url, {
       headers: {
@@ -285,9 +298,15 @@ async function scrapeBrand(brandKey, brandConfig) {
         errorMessage = 'Website no longer available';
       } else if (status === 404) {
         errorMessage = 'Page not found';
+      } else if (status === 429) {
+        errorMessage = 'Rate limited - too many requests';
       } else {
         errorMessage = `HTTP ${status} error`;
       }
+    } else if (error.code === 'ENOTFOUND') {
+      errorMessage = 'Domain not found';
+    } else if (error.code === 'ECONNREFUSED') {
+      errorMessage = 'Connection refused';
     }
     
     console.error(`Error scraping ${brandConfig.name}:`, errorMessage);
@@ -323,8 +342,8 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
     const brandEntries = Object.entries(BRANDS);
     const allResults = [];
     
-    // Process brands in larger batches for faster processing
-    const batchSize = 10; // Increased from 5 to 10
+    // Process brands in smaller batches to reduce rate limiting
+    const batchSize = 5; // Reduced batch size
     for (let i = 0; i < brandEntries.length; i += batchSize) {
       const batch = brandEntries.slice(i, i + batchSize);
       
@@ -339,7 +358,7 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
       
       const batchResults = await Promise.allSettled(batchPromises);
       
-      // Process results without delays for faster processing
+      // Process results
       batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           allResults.push(result.value);
@@ -361,9 +380,9 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
         }
       });
       
-      // Reduced delay between batches for faster processing
+      // Add longer delay between batches to prevent rate limiting
       if (i + batchSize < brandEntries.length) {
-        await new Promise(resolve => setTimeout(resolve, 200)); // Reduced from 500ms to 200ms
+        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
       }
     }
     
