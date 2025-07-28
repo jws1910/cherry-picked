@@ -1,0 +1,245 @@
+.search-container {
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.search-input-container {
+  display: flex;
+  max-width: 400px;
+  width: 100%;
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.1);
+  overflow: hidden;
+  border: 2px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.search-input-container:focus-within {
+  border-color: #800020;
+  box-shadow: 0 4px 20px rgba(128, 0, 32, 0.2);
+}
+
+.search-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-button {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.search-button:hover:not(:disabled) {
+  background: #600018;
+}
+
+.search-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.search-results {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(128, 0, 32, 0.1);
+  border: 1px solid #f0f0f0;
+  margin-top: 1rem;
+}
+
+.search-results-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #800020;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.search-brands-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.search-brand-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  min-width: 250px;
+  max-width: 300px;
+}
+
+.search-brand-card:hover {
+  border-color: #800020;
+  box-shadow: 0 8px 25px rgba(128, 0, 32, 0.15);
+  transform: translateY(-5px);
+}
+
+.brand-logo-container {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+}
+
+.brand-logo {
+  max-width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+}
+
+.brand-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sale-info {
+  margin-bottom: 1.5rem;
+}
+
+.sale-text {
+  background: rgba(128, 0, 32, 0.1);
+  color: #800020;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.sale-percentage {
+  background: #800020;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.shop-now-btn {
+  background: #800020;
+  color: white;
+  text-decoration: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.shop-now-btn:hover {
+  background: #600018;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.3);
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+}
+
+.no-results h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #800020;
+  margin-bottom: 1rem;
+}
+
+.no-results p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.brand-suggestion {
+  background: rgba(128, 0, 32, 0.05);
+  color: #800020;
+  padding: 1rem;
+  border-radius: 8px;
+  font-style: italic;
+  border-left: 4px solid #800020;
+}
+
+.clear-search-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.clear-search-btn:hover {
+  background: #ff5252;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .search-form {
+    justify-content: center;
+  }
+  
+  .search-input-container {
+    flex-direction: column;
+    border-radius: 15px;
+    max-width: 100%;
+  }
+  
+  .search-input {
+    padding: 1rem;
+  }
+  
+  .search-button {
+    padding: 0.8rem;
+    border-radius: 0 0 15px 15px;
+  }
+  
+  .search-brands-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .search-brand-card {
+    width: 100%;
+    max-width: 100%;
+  }
+} 

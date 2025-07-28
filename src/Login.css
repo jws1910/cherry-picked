@@ -1,0 +1,266 @@
+.login-container {
+  min-height: 100vh;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  background: white;
+  border-radius: 25px;
+  padding: 3rem 2rem;
+  box-shadow: 0 20px 40px rgba(128, 0, 32, 0.1);
+  border: 2px solid #800020;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.app-logo {
+  height: 120px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.app-logo:hover {
+  transform: scale(1.05);
+}
+
+.login-card h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #800020;
+  margin-bottom: 0.5rem;
+}
+
+.login-card p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.slogan {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #800020;
+  box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.login-button {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.login-button:hover:not(:disabled) {
+  background: #600018;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.3);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.toggle-auth {
+  background: none;
+  border: none;
+  color: #800020;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.toggle-auth:hover {
+  color: #600018;
+}
+
+.error-message {
+  background: #fee;
+  color: #c33;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #fcc;
+}
+
+.signup-prompt {
+  text-align: center;
+  padding: 1.5rem;
+  background: rgba(128, 0, 32, 0.05);
+  border-radius: 12px;
+  margin: 1rem 0;
+}
+
+.signup-prompt p {
+  margin: 0.5rem 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.prompt-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.prompt-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.yes-btn {
+  background: #800020;
+  color: white;
+}
+
+.yes-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+}
+
+.no-btn {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.no-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.password-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.password-toggle:hover {
+  background: rgba(128, 0, 32, 0.1);
+  transform: scale(1.1);
+}
+
+.password-group .form-input {
+  padding-right: 45px;
+}
+
+.confirm-password-error {
+  color: #c33;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+.field-error {
+  color: #800020 !important;
+  font-size: 0.5rem !important;
+  margin-top: 0.15rem !important;
+  margin-bottom: 0.3rem !important;
+  text-align: left !important;
+  padding-left: 0.5rem !important;
+  font-weight: 400 !important;
+  line-height: 1.2 !important;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .app-logo {
+    height: 100px;
+  }
+  
+  .login-card h1 {
+    font-size: 2rem;
+  }
+  
+  .login-card p {
+    font-size: 1rem;
+  }
+} 

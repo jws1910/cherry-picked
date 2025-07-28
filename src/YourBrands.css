@@ -1,0 +1,510 @@
+.your-brands-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.your-brands-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.your-brands-header h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #800020;
+  margin: 0;
+}
+
+.your-brands-header p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.manage-brands-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.manage-brands-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+}
+
+.your-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.favorite-brand-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 1rem;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.favorite-brand-card:hover {
+  border-color: #800020;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.1);
+}
+
+.favorite-brand-card.on-sale {
+  border-color: #800020;
+  background: #800020;
+  color: white;
+  transition: none;
+}
+
+.brand-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.favorite-brand-card.on-sale .brand-info h3 {
+  color: white;
+  transition: none;
+}
+
+.brand-link {
+  color: #800020;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: color 0.3s ease;
+}
+
+.favorite-brand-card.on-sale .brand-link {
+  color: white;
+  transition: none;
+}
+
+.brand-link:hover {
+  color: #600018;
+  text-decoration: underline;
+}
+
+.favorite-brand-card.on-sale .brand-link:hover {
+  color: white;
+}
+
+.remove-brand-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #ff4444;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.remove-brand-btn:hover {
+  background: #cc0000;
+  transform: scale(1.1);
+}
+
+.add-brand-card {
+  background: #f8f9fa;
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+}
+
+.add-brand-card:hover {
+  border-color: #800020;
+  background: rgba(128, 0, 32, 0.05);
+}
+
+.add-brand-content {
+  text-align: center;
+}
+
+.add-icon {
+  font-size: 2rem;
+  color: #800020;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.add-brand-content p {
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.brand-selector-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  padding-top: 10vh;
+}
+
+.brand-selector-content {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 1000px;
+  width: 90%;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: auto;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #800020 #f0f0f0;
+}
+
+.brand-selector-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.brand-selector-content::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.brand-selector-content::-webkit-scrollbar-thumb {
+  background: #800020;
+  border-radius: 4px;
+}
+
+.brand-selector-content::-webkit-scrollbar-thumb:hover {
+  background: #600018;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #800020;
+  margin: 0;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-modal-btn:hover {
+  background: #f0f0f0;
+  color: #800020;
+}
+
+.available-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  max-height: 50vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #800020 #f0f0f0;
+}
+
+.available-brands-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.available-brands-grid::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.available-brands-grid::-webkit-scrollbar-thumb {
+  background: #800020;
+  border-radius: 4px;
+}
+
+.available-brands-grid::-webkit-scrollbar-thumb:hover {
+  background: #600018;
+}
+
+.available-brand-card {
+  background: white;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: center;
+}
+
+.available-brand-card:hover {
+  border-color: #800020;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(128, 0, 32, 0.1);
+}
+
+.available-brand-card.selected {
+  border-color: #800020;
+  background: rgba(128, 0, 32, 0.05);
+}
+
+.available-brand-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.selection-indicator {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #800020;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.save-changes-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.save-changes-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+}
+
+.cancel-btn {
+  background: #f0f0f0;
+  color: #666;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.add-brand-section {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.add-brand-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.add-brand-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+}
+
+.add-brand-form {
+  padding: 1rem 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #800020;
+  box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
+}
+
+.form-input::placeholder {
+  color: #999;
+}
+
+.form-note {
+  background: rgba(128, 0, 32, 0.05);
+  border: 1px solid rgba(128, 0, 32, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.form-note p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .your-brands-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .available-brands-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    max-height: 40vh;
+  }
+  
+  .favorite-brand-card {
+    padding: 0.8rem;
+  }
+  
+  .brand-info h3 {
+    font-size: 0.9rem;
+  }
+  
+  .brand-link {
+    font-size: 0.7rem;
+  }
+  
+  .brand-selector-content {
+    padding: 1.5rem;
+    margin: 1rem;
+    width: 95%;
+    max-height: 80vh;
+  }
+  
+  .brand-selector-modal {
+    padding: 1rem;
+    padding-top: 5vh;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .save-changes-btn,
+  .cancel-btn {
+    min-width: 100%;
+  }
+  
+  .add-brand-btn {
+    min-width: 100%;
+  }
+  
+  .form-input {
+    font-size: 0.9rem;
+  }
+  
+  .your-brands-header h2 {
+    font-size: 1.5rem;
+  }
+} 

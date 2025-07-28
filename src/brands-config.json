@@ -1,0 +1,207 @@
+{
+  "brands": {
+    "iro": {
+      "name": "IRO Paris",
+      "url": "https://www.iroparis.com/us/home"
+    },
+    "reformation": {
+      "name": "Reformation",
+      "url": "https://www.thereformation.com/?_gl=1*1mrajmg*_up*MQ..&gclid=CjwKCAjw1emzBhB8EiwAHwZZxd-bisEWq2TNIVBsaRnd2mbiy9YeKxqzxwGJp1WIrdQ2AyLkX0rIsBoCX9cQAvD_BwE"
+    },
+    "rouje": {
+      "name": "Rouje",
+      "url": "https://www.rouje.com/en-us"
+    },
+    "isabelmarant": {
+      "name": "Isabel Marant",
+      "url": "https://us.isabelmarant.com/"
+    },
+    "maje": {
+      "name": "Maje",
+      "url": "https://us.maje.com/"
+    },
+    "zadig": {
+      "name": "Zadig & Voltaire",
+      "url": "https://zadig-et-voltaire.com/us/en/"
+    },
+    "sandro": {
+      "name": "Sandro Paris",
+      "url": "https://us.sandro-paris.com/"
+    },
+    "sezane": {
+      "name": "Sézane",
+      "url": "https://www.sezane.com/us"
+    },
+    "realisation": {
+      "name": "Réalisation Par",
+      "url": "https://realisationpar.com/"
+    },
+    "faithfull": {
+      "name": "Faithfull The Brand",
+      "url": "https://faithfullthebrand.com/"
+    },
+    "staud": {
+      "name": "Staud",
+      "url": "https://staud.clothing/"
+    },
+    "cultgaia": {
+      "name": "Cult Gaia",
+      "url": "https://cultgaia.com/"
+    },
+    "nanushka": {
+      "name": "Nanushka",
+      "url": "https://nanushka.com/"
+    },
+    "ganni": {
+      "name": "Ganni",
+      "url": "https://www.ganni.com/us/"
+    },
+    "veja": {
+      "name": "Veja",
+      "url": "https://www.veja-store.com/en_us/"
+    },
+    "golden": {
+      "name": "Golden Goose",
+      "url": "https://www.goldengoose.com/us/"
+    },
+    "apc": {
+      "name": "A.P.C.",
+      "url": "https://www.apc-us.com/"
+    },
+    "acne": {
+      "name": "Acne Studios",
+      "url": "https://www.acnestudios.com/us/en/"
+    },
+    "toteme": {
+      "name": "Totême",
+      "url": "https://toteme-studio.com/"
+    },
+    "theory": {
+      "name": "Theory",
+      "url": "https://www.theory.com/us/"
+    },
+    "cos": {
+      "name": "COS",
+      "url": "https://www.cos.com/en_us/"
+    },
+    "arket": {
+      "name": "Arket",
+      "url": "https://www.arket.com/en_us/"
+    },
+    "otherstories": {
+      "name": "& Other Stories",
+      "url": "https://www.stories.com/en_us/"
+    },
+    "massimodutti": {
+      "name": "Massimo Dutti",
+      "url": "https://www.massimodutti.com/us/"
+    },
+    "zara": {
+      "name": "Zara",
+      "url": "https://www.zara.com/us/"
+    },
+    "mango": {
+      "name": "Mango",
+      "url": "https://shop.mango.com/us/"
+    },
+    "h&m": {
+      "name": "H&M",
+      "url": "https://www2.hm.com/en_us/"
+    },
+    "uniqlo": {
+      "name": "Uniqlo",
+      "url": "https://www.uniqlo.com/us/en/"
+    },
+    "everlane": {
+      "name": "Everlane",
+      "url": "https://www.everlane.com/"
+    },
+    "madewell": {
+      "name": "Madewell",
+      "url": "https://www.madewell.com/"
+    },
+    "anthropologie": {
+      "name": "Anthropologie",
+      "url": "https://www.anthropologie.com/"
+    },
+    "freepeople": {
+      "name": "Free People",
+      "url": "https://www.freepeople.com/"
+    },
+    "urbanoutfitters": {
+      "name": "Urban Outfitters",
+      "url": "https://www.urbanoutfitters.com/"
+    },
+    "axelarigato": {
+      "name": "Axel Arigato",
+      "url": "https://axelarigato.com/?utm_source=google&utm_medium=cpc&utm_campaign=8696969489&utm_content=88957625658&utm_term=axel%20arigato&gad_source=1&gad_campaignid=8696969489&gbraid=0AAAAADnO4WVsg3dH83-ZynwgdOgLfR01J&gclid=CjwKCAjwv5zEBhBwEiwAOg2YKMiXQ5jQlYKk8TRDo9cPJbtlti2zXwz657RB6CbZFwV3IyDwP0YN1xoCkt8QAvD_BwE"
+    },
+    "ragandbone": {
+      "name": "Rag & Bone",
+      "url": "https://www.rag-bone.com/"
+    }
+  },
+  "saleCategories": {
+    "end-of-season": {
+      "name": "End of Season Sale",
+      "keywords": ["end of season", "end-of-season", "endofseason", "seasonal sale", "clearance"]
+    },
+    "flash-sale": {
+      "name": "Flash Sale",
+      "keywords": ["flash sale", "flashsale", "limited time", "24 hours", "48 hours", "72 hours"]
+    },
+    "fifty-percent": {
+      "name": "50% Off Sale",
+      "keywords": ["50% off", "50 percent off", "half off", "50% discount", "up to 50%"]
+    },
+    "forty-percent": {
+      "name": "40% Off Sale",
+      "keywords": ["40% off", "40 percent off", "up to 40%", "40% discount"]
+    },
+    "sixty-percent": {
+      "name": "60% Off Sale",
+      "keywords": ["60% off", "60 percent off", "up to 60%", "60% discount"]
+    },
+    "seventy-percent": {
+      "name": "70% Off Sale",
+      "keywords": ["70% off", "70 percent off", "up to 70%", "70% discount"]
+    },
+    "winter-sale": {
+      "name": "Winter Sale",
+      "keywords": ["winter sale", "winter clearance", "winter discount"]
+    },
+    "student-sale": {
+      "name": "Student Sale",
+      "keywords": ["student discount", "student sale", "university", "college", "academic"]
+    },
+    "new-member": {
+      "name": "New Member Sale",
+      "keywords": ["sign up", "signup", "new member", "email signup", "text signup", "newsletter", "first order"]
+    },
+    "black-friday": {
+      "name": "Black Friday Sale",
+      "keywords": ["black friday", "blackfriday", "bf"]
+    },
+    "cyber-monday": {
+      "name": "Cyber Monday Sale",
+      "keywords": ["cyber monday", "cybermonday", "cm"]
+    },
+    "final-markdown": {
+      "name": "Final Markdown",
+      "keywords": ["final markdown", "final markdowns", "final markdown sale", "even more"]
+    },
+    "christmas": {
+      "name": "Christmas Sale",
+      "keywords": ["christmas", "holiday", "xmas", "holiday sale"]
+    },
+    "summer": {
+      "name": "Summer Sale",
+      "keywords": ["summer sale", "summer clearance", "summer discount"]
+    }
+  },
+  "schedule": {
+    "checkTime": "08:00",
+    "timezone": "America/New_York",
+    "interval": "24h"
+  }
+} 

@@ -1,0 +1,221 @@
+{
+  "brandImages": {
+    "iro": {
+      "imagePath": "/images/brands/iro-logo.png",
+      "altText": "IRO Paris",
+      "width": "auto",
+      "height": "60px"
+    },
+    "reformation": {
+      "imagePath": "/images/brands/reformation-logo.png",
+      "altText": "Reformation",
+      "width": "auto",
+      "height": "60px"
+    },
+    "rouje": {
+      "imagePath": "/images/brands/rouje-logo.png",
+      "altText": "Rouje",
+      "width": "auto",
+      "height": "60px"
+    },
+    "isabelmarant": {
+      "imagePath": "/images/brands/isabel-marant-logo.png",
+      "altText": "Isabel Marant",
+      "width": "auto",
+      "height": "60px"
+    },
+    "maje": {
+      "imagePath": "/images/brands/maje-logo.png",
+      "altText": "Maje",
+      "width": "auto",
+      "height": "60px"
+    },
+    "zadig": {
+      "imagePath": "/images/brands/zadig-voltaire-logo.png",
+      "altText": "Zadig & Voltaire",
+      "width": "auto",
+      "height": "60px"
+    },
+    "sandro": {
+      "imagePath": "/images/brands/sandro-logo.png",
+      "altText": "Sandro Paris",
+      "width": "auto",
+      "height": "60px"
+    },
+    "sezane": {
+      "imagePath": "/images/brands/sezane-logo.png",
+      "altText": "Sézane",
+      "width": "auto",
+      "height": "60px"
+    },
+    "realisation": {
+      "imagePath": "/images/brands/realisation-logo.png",
+      "altText": "Réalisation Par",
+      "width": "auto",
+      "height": "60px"
+    },
+    "faithfull": {
+      "imagePath": "/images/brands/faithfull-logo.png",
+      "altText": "Faithfull The Brand",
+      "width": "auto",
+      "height": "60px"
+    },
+    "staud": {
+      "imagePath": "/images/brands/staud-logo.png",
+      "altText": "Staud",
+      "width": "auto",
+      "height": "60px"
+    },
+    "cultgaia": {
+      "imagePath": "/images/brands/cult-gaia-logo.png",
+      "altText": "Cult Gaia",
+      "width": "auto",
+      "height": "60px"
+    },
+    "nanushka": {
+      "imagePath": "/images/brands/nanushka-logo.png",
+      "altText": "Nanushka",
+      "width": "auto",
+      "height": "60px"
+    },
+    "ganni": {
+      "imagePath": "/images/brands/ganni-logo.png",
+      "altText": "Ganni",
+      "width": "auto",
+      "height": "60px"
+    },
+    "veja": {
+      "imagePath": "/images/brands/veja-logo.png",
+      "altText": "Veja",
+      "width": "auto",
+      "height": "60px"
+    },
+    "golden": {
+      "imagePath": "/images/brands/golden-goose-logo.png",
+      "altText": "Golden Goose",
+      "width": "auto",
+      "height": "60px"
+    },
+    "apc": {
+      "imagePath": "/images/brands/apc-logo.png",
+      "altText": "A.P.C.",
+      "width": "auto",
+      "height": "60px"
+    },
+    "acne": {
+      "imagePath": "/images/brands/acne-studios-logo.png",
+      "altText": "Acne Studios",
+      "width": "auto",
+      "height": "60px"
+    },
+    "toteme": {
+      "imagePath": "/images/brands/toteme-logo.png",
+      "altText": "Totême",
+      "width": "auto",
+      "height": "60px"
+    },
+    "theory": {
+      "imagePath": "/images/brands/theory-logo.png",
+      "altText": "Theory",
+      "width": "auto",
+      "height": "60px"
+    },
+    "cos": {
+      "imagePath": "/images/brands/cos-logo.png",
+      "altText": "COS",
+      "width": "auto",
+      "height": "60px"
+    },
+    "arket": {
+      "imagePath": "/images/brands/arket-logo.png",
+      "altText": "Arket",
+      "width": "auto",
+      "height": "60px"
+    },
+    "otherstories": {
+      "imagePath": "/images/brands/other-stories-logo.png",
+      "altText": "& Other Stories",
+      "width": "auto",
+      "height": "60px"
+    },
+    "massimodutti": {
+      "imagePath": "/images/brands/massimo-dutti-logo.png",
+      "altText": "Massimo Dutti",
+      "width": "auto",
+      "height": "60px"
+    },
+    "zara": {
+      "imagePath": "/images/brands/zara-logo.png",
+      "altText": "Zara",
+      "width": "auto",
+      "height": "60px"
+    },
+    "mango": {
+      "imagePath": "/images/brands/mango-logo.png",
+      "altText": "Mango",
+      "width": "auto",
+      "height": "60px"
+    },
+    "h&m": {
+      "imagePath": "/images/brands/hm-logo.png",
+      "altText": "H&M",
+      "width": "auto",
+      "height": "60px"
+    },
+    "uniqlo": {
+      "imagePath": "/images/brands/uniqlo-logo.png",
+      "altText": "Uniqlo",
+      "width": "auto",
+      "height": "60px"
+    },
+    "everlane": {
+      "imagePath": "/images/brands/everlane-logo.png",
+      "altText": "Everlane",
+      "width": "auto",
+      "height": "60px"
+    },
+    "madewell": {
+      "imagePath": "/images/brands/madewell-logo.png",
+      "altText": "Madewell",
+      "width": "auto",
+      "height": "60px"
+    },
+    "anthropologie": {
+      "imagePath": "/images/brands/anthropologie-logo.png",
+      "altText": "Anthropologie",
+      "width": "auto",
+      "height": "60px"
+    },
+    "freepeople": {
+      "imagePath": "/images/brands/free-people-logo.png",
+      "altText": "Free People",
+      "width": "auto",
+      "height": "60px"
+    },
+    "urbanoutfitters": {
+      "imagePath": "/images/brands/urban-outfitters-logo.png",
+      "altText": "Urban Outfitters",
+      "width": "auto",
+      "height": "60px"
+    },
+    "axelarigato": {
+      "imagePath": "/images/brands/axel-arigato-logo.png",
+      "altText": "Axel Arigato",
+      "width": "auto",
+      "height": "60px"
+    },
+    "ragandbone": {
+      "imagePath": "/images/brands/rag-and-bone-logo.png",
+      "altText": "Rag & Bone",
+      "width": "auto",
+      "height": "60px"
+    }
+  },
+  "settings": {
+    "useImages": true,
+    "fallbackToText": true,
+    "defaultWidth": "auto",
+    "defaultHeight": "60px",
+    "imageFormat": "png"
+  }
+} 
