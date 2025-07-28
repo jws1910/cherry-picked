@@ -16,21 +16,32 @@ const YourBrands = ({ user, onUpdateUser }) => {
     const loadFavoriteBrands = async () => {
       if (user) {
         try {
+          console.log('Loading favorite brands for user:', user.email);
           const authToken = localStorage.getItem('authToken');
+          console.log('Auth token for loading:', authToken ? 'Present' : 'Missing');
+          
           const response = await axios.get('http://localhost:3001/api/auth/favorite-brands', {
             headers: {
               'Authorization': `Bearer ${authToken}`
             }
           });
 
+          console.log('Load response:', response.data);
+
           if (response.data.success) {
+            console.log('Loaded favorite brands from database:', response.data.favoriteBrands);
             setSelectedBrands(response.data.favoriteBrands);
             // Update user object with favorite brands from database
             const updatedUser = { ...user, favoriteBrands: response.data.favoriteBrands };
             onUpdateUser(updatedUser);
+          } else {
+            console.error('Failed to load favorite brands:', response.data);
           }
         } catch (error) {
           console.error('Error loading favorite brands:', error);
+          if (error.response) {
+            console.error('Error response:', error.response.data);
+          }
         }
       }
     };
@@ -41,8 +52,11 @@ const YourBrands = ({ user, onUpdateUser }) => {
   // Save favorite brands to database
   const saveFavoriteBrands = async (brands) => {
     try {
+      console.log('Saving favorite brands to database:', brands);
       setLoading(true);
       const authToken = localStorage.getItem('authToken');
+      console.log('Auth token:', authToken ? 'Present' : 'Missing');
+      
       const response = await axios.post('http://localhost:3001/api/auth/favorite-brands', {
         favoriteBrands: brands
       }, {
@@ -52,15 +66,21 @@ const YourBrands = ({ user, onUpdateUser }) => {
         }
       });
 
+      console.log('Save response:', response.data);
+
       if (response.data.success) {
         // Update user object with new favorite brands
         const updatedUser = { ...user, favoriteBrands: brands };
         onUpdateUser(updatedUser);
+        console.log('Successfully saved favorite brands to database');
       } else {
-        console.error('Failed to save favorite brands');
+        console.error('Failed to save favorite brands:', response.data);
       }
     } catch (error) {
       console.error('Error saving favorite brands:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
     } finally {
       setLoading(false);
     }
@@ -247,10 +267,14 @@ const YourBrands = ({ user, onUpdateUser }) => {
             <div className="modal-actions">
               <button 
                 className="save-changes-btn"
-                onClick={() => setShowBrandSelector(false)}
+                onClick={async () => {
+                  await saveFavoriteBrands(selectedBrands);
+                  setShowBrandSelector(false);
+                }}
                 type="button"
+                disabled={loading}
               >
-                Save Changes
+                {loading ? 'Saving...' : 'Save Changes'}
               </button>
               <button 
                 className="cancel-btn"
