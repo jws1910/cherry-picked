@@ -10,6 +10,7 @@ const YourBrands = ({ user, onUpdateUser }) => {
   const [newBrandName, setNewBrandName] = useState('');
   const [newBrandWebsite, setNewBrandWebsite] = useState('');
   const [loading, setLoading] = useState(false);
+  const [selectionLoading, setSelectionLoading] = useState(false);
 
   // Load favorite brands from database on component mount
   useEffect(() => {
@@ -73,39 +74,77 @@ const YourBrands = ({ user, onUpdateUser }) => {
         const updatedUser = { ...user, favoriteBrands: brands };
         onUpdateUser(updatedUser);
         console.log('Successfully saved favorite brands to database');
+        return true;
       } else {
         console.error('Failed to save favorite brands:', response.data);
+        throw new Error('Failed to save favorite brands');
       }
     } catch (error) {
       console.error('Error saving favorite brands:', error);
       if (error.response) {
         console.error('Error response:', error.response.data);
       }
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const handleBrandToggle = (brandKey) => {
+  const handleBrandToggle = async (brandKey) => {
+    // Validate brandKey exists in config
+    if (!brandsConfig?.brands?.[brandKey]) {
+      console.error('Invalid brand key:', brandKey);
+      return;
+    }
+
+    // Prevent rapid clicking
+    if (selectionLoading) return;
+
     let newSelectedBrands;
     if (selectedBrands.includes(brandKey)) {
+      // Remove brand
       newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
     } else if (selectedBrands.length < 5) {
+      // Add brand (if under limit)
       newSelectedBrands = [...selectedBrands, brandKey];
     } else {
-      return; // Don't add if already at limit
+      // Show feedback when trying to add more than 5 brands
+      alert('You can only select up to 5 brands. Please remove one before adding another.');
+      return;
     }
     
+    setSelectionLoading(true);
     setSelectedBrands(newSelectedBrands);
-    saveFavoriteBrands(newSelectedBrands);
+    
+    try {
+      await saveFavoriteBrands(newSelectedBrands);
+    } catch (error) {
+      console.error('Error saving brand selection:', error);
+      // Revert the selection if save failed
+      setSelectedBrands(selectedBrands);
+    } finally {
+      setSelectionLoading(false);
+    }
   };
 
 
 
-  const removeBrand = (brandKey) => {
+  const removeBrand = async (brandKey) => {
+    if (selectionLoading) return;
+    
     const newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
+    setSelectionLoading(true);
     setSelectedBrands(newSelectedBrands);
-    saveFavoriteBrands(newSelectedBrands);
+    
+    try {
+      await saveFavoriteBrands(newSelectedBrands);
+    } catch (error) {
+      console.error('Error removing brand:', error);
+      // Revert the selection if save failed
+      setSelectedBrands(selectedBrands);
+    } finally {
+      setSelectionLoading(false);
+    }
   };
 
   const getBrandName = (brandKey) => {
@@ -229,7 +268,12 @@ const YourBrands = ({ user, onUpdateUser }) => {
         <div className="brand-selector-modal">
           <div className="brand-selector-content">
             <div className="modal-header">
-              <h3>Select Your Brands ({selectedBrands.length}/5)</h3>
+              <div>
+                <h3>Select Your Brands ({selectedBrands.length}/5)</h3>
+                <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', color: '#666' }}>
+                  Click on brands to add or remove them from your favorites
+                </p>
+              </div>
               <button 
                 className="close-modal-btn"
                 onClick={() => setShowBrandSelector(false)}
@@ -240,18 +284,33 @@ const YourBrands = ({ user, onUpdateUser }) => {
               </button>
             </div>
             <div className="available-brands-grid">
-              {brandsConfig?.brands && Object.entries(brandsConfig.brands).map(([brandKey, brandConfig]) => (
+              {brandsConfig?.brands && Object.entries(brandsConfig.brands)
+                .sort(([,a], [,b]) => a.name.localeCompare(b.name)) // Sort alphabetically
+                .map(([brandKey, brandConfig]) => (
                 <div 
                   key={brandKey} 
-                  className={`available-brand-card ${selectedBrands.includes(brandKey) ? 'selected' : ''}`}
+                  className={`available-brand-card ${selectedBrands.includes(brandKey) ? 'selected' : ''} ${selectionLoading ? 'loading' : ''}`}
                   onClick={() => handleBrandToggle(brandKey)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleBrandToggle(brandKey);
+                    }
+                  }}
                   role="button"
                   tabIndex={0}
+                  aria-label={`${selectedBrands.includes(brandKey) ? 'Remove' : 'Add'} ${brandConfig.name}`}
+                  style={{ opacity: selectionLoading ? 0.7 : 1, pointerEvents: selectionLoading ? 'none' : 'auto' }}
                 >
                   <h4>{brandConfig.name}</h4>
                   <span className="selection-indicator">
                     {selectedBrands.includes(brandKey) ? '✓' : ''}
                   </span>
+                  {selectionLoading && (
+                    <div className="selection-loading">
+                      <div className="loading-spinner-small"></div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
