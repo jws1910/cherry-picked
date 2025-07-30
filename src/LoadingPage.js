@@ -36,7 +36,15 @@ const LoadingPage = ({ user, onLoadingComplete }) => {
         <div className="welcome-container">
           <div className="welcome-content">
             <h1 className="welcome-title">
-              Welcome back, <span className="user-name">{user?.firstName || 'User'}</span>
+              {user?.isFirstLogin ? (
+                <>
+                  Welcome to cherry-pick, <span className="user-name">{user?.firstName || 'User'}</span>
+                </>
+              ) : (
+                <>
+                  Welcome back, <span className="user-name">{user?.firstName || 'User'}</span>
+                </>
+              )}
             </h1>
             <div className="loading-dots">
               <span className="dot"></span>

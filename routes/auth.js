@@ -85,7 +85,8 @@ router.post('/register', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        favoriteBrands: user.favoriteBrands
+        favoriteBrands: user.favoriteBrands,
+        isFirstLogin: true
       }
     });
   } catch (error) {
@@ -135,6 +136,11 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    // Check if this is the first login (no previous lastLogin or lastLogin is the same as createdAt)
+    const isFirstLogin = !user.lastLogin || 
+      user.lastLogin.getTime() === user.createdAt.getTime() ||
+      user.lastLogin.getTime() === new Date(user.createdAt).getTime();
+
     // Update last login
     user.lastLogin = new Date();
     await user.save();
@@ -156,7 +162,8 @@ router.post('/login', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        favoriteBrands: user.favoriteBrands
+        favoriteBrands: user.favoriteBrands,
+        isFirstLogin
       }
     });
   } catch (error) {
@@ -188,7 +195,8 @@ router.get('/profile', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        favoriteBrands: user.favoriteBrands
+        favoriteBrands: user.favoriteBrands,
+        isFirstLogin: false // Profile endpoint is for existing users
       }
     });
   } catch (error) {
