@@ -90,8 +90,15 @@ function App() {
       });
 
       if (response.data.success) {
-        setUser(response.data.user);
-        setShowLoadingPage(true);
+        const user = response.data.user;
+        setUser(user);
+        
+        // Check if user is admin and redirect accordingly
+        if (user.role === 'admin') {
+          setShowAdminPanel(true);
+        } else {
+          setShowLoadingPage(true);
+        }
       } else {
         console.error('Failed to load user profile');
         setUser(userData); // Fallback to login data
@@ -156,8 +163,14 @@ function App() {
           });
 
           if (response.data.success) {
-            setUser(response.data.user);
-            console.log('✅ User authenticated on page load:', response.data.user.email);
+            const user = response.data.user;
+            setUser(user);
+            console.log('✅ User authenticated on page load:', user.email);
+            
+            // Check if user is admin and redirect accordingly
+            if (user.role === 'admin') {
+              setShowAdminPanel(true);
+            }
           } else {
             console.log('❌ Invalid token, clearing localStorage');
             localStorage.removeItem('token');

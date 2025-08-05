@@ -368,7 +368,7 @@ async function scrapeBrand(brandKey, brandConfig) {
           console.error(`Error updating brand sale status for ${brandKey}:`, error);
         }
       }
-
+      
       return {
         brandKey,
         brandName: brandConfig.name,

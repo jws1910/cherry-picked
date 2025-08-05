@@ -8,7 +8,7 @@ const AdminPanel = ({ onBack, user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  const [adminNotes, setAdminNotes] = useState('');
+  const [adminNotes, setAdminNotes] = useState({});
   const [activeTab, setActiveTab] = useState('requests');
   const [newBrand, setNewBrand] = useState({
     brandName: '',
@@ -66,10 +66,9 @@ const AdminPanel = ({ onBack, user }) => {
     try {
       setLoading(true);
       const authToken = localStorage.getItem('token');
+      
       const response = await axios.get('http://localhost:3001/api/brands', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
+        headers: { 'Authorization': `Bearer ${authToken}` }
       });
 
       if (response.data.success) {
@@ -90,7 +89,7 @@ const AdminPanel = ({ onBack, user }) => {
       const authToken = localStorage.getItem('token');
       const response = await axios.put(`http://localhost:3001/api/brand-requests/admin/${requestId}`, {
         status,
-        adminNotes
+        adminNotes: adminNotes[requestId] || ''
       }, {
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -102,7 +101,12 @@ const AdminPanel = ({ onBack, user }) => {
         // Refresh the list
         fetchBrandRequests();
         setSelectedRequest(null);
-        setAdminNotes('');
+        // Clear notes for this specific request
+        setAdminNotes(prev => {
+          const newNotes = { ...prev };
+          delete newNotes[requestId];
+          return newNotes;
+        });
         alert(`Brand request ${status} successfully`);
       } else {
         alert('Failed to update brand request');
@@ -252,55 +256,86 @@ const AdminPanel = ({ onBack, user }) => {
                     )}
                   </div>
 
-                  {request.status === 'new brand' && (
-                    <div className="request-actions">
-                      <textarea
-                        placeholder="Add admin notes (optional)"
-                        value={adminNotes}
-                        onChange={(e) => setAdminNotes(e.target.value)}
-                        className="admin-notes"
-                      />
-                      <div className="action-buttons">
-                        <button 
-                          onClick={() => handleStatusUpdate(request.id, 'in progress')}
-                          className="progress-btn"
-                        >
-                          Mark In Progress
-                        </button>
-                        <button 
-                          onClick={() => handleStatusUpdate(request.id, 'rejected')}
-                          className="reject-btn"
-                        >
-                          Reject
-                        </button>
-                      </div>
+                  <div className="request-actions">
+                    <textarea
+                      placeholder="Add admin notes (optional)"
+                      value={adminNotes[request.id] || ''}
+                      onChange={(e) => setAdminNotes(prev => ({
+                        ...prev,
+                        [request.id]: e.target.value
+                      }))}
+                      className="admin-notes"
+                    />
+                    <div className="action-buttons">
+                      {request.status === 'new brand' && (
+                        <>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'in progress')}
+                            className="progress-btn"
+                          >
+                            → In Progress
+                          </button>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'rejected')}
+                            className="reject-btn"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      
+                      {request.status === 'in progress' && (
+                        <>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'added')}
+                            className="approve-btn"
+                          >
+                            → Added
+                          </button>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'new brand')}
+                            className="back-btn"
+                          >
+                            ← Back to New
+                          </button>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'rejected')}
+                            className="reject-btn"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      
+                      {request.status === 'added' && (
+                        <>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'in progress')}
+                            className="back-btn"
+                          >
+                            ← Back to In Progress
+                          </button>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'rejected')}
+                            className="reject-btn"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      
+                      {request.status === 'rejected' && (
+                        <>
+                          <button 
+                            onClick={() => handleStatusUpdate(request.id, 'new brand')}
+                            className="progress-btn"
+                          >
+                            → Reopen
+                          </button>
+                        </>
+                      )}
                     </div>
-                  )}
-
-                  {request.status === 'in progress' && (
-                    <div className="request-actions">
-                      <textarea
-                        placeholder="Add admin notes (optional)"
-                        value={adminNotes}
-                        onChange={(e) => setAdminNotes(e.target.value)}
-                        className="admin-notes"
-                      />
-                      <div className="action-buttons">
-                        <button 
-                          onClick={() => handleStatusUpdate(request.id, 'added')}
-                          className="approve-btn"
-                        >
-                          Mark Added
-                        </button>
-                        <button 
-                          onClick={() => handleStatusUpdate(request.id, 'rejected')}
-                          className="reject-btn"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -347,18 +382,44 @@ const AdminPanel = ({ onBack, user }) => {
           </div>
 
           <div className="brands-list">
-            <h3>All Brands</h3>
+            <h3>All Brands ({allBrands.length})</h3>
             {allBrands.length === 0 ? (
               <p>No brands found.</p>
             ) : (
-              <div className="brands-grid">
-                {allBrands.map((brand) => (
-                  <div key={brand.id} className="brand-card">
-                    <h4>{brand.name}</h4>
-                    <p><strong>Key:</strong> {brand.key}</p>
-                    <p><strong>URL:</strong> <a href={brand.url} target="_blank" rel="noopener noreferrer">{brand.url}</a></p>
-                  </div>
-                ))}
+              <div className="brands-table">
+                <div className="brands-table-header">
+                  <div className="brand-logo-header">Logo</div>
+                  <div className="brand-name-header">Brand Name</div>
+                  <div className="brand-website-header">Website</div>
+                </div>
+                <div className="brands-table-body">
+                  {allBrands.map((brand) => (
+                    <div key={brand.id} className="brand-row">
+                      <div className="brand-logo">
+                        <img 
+                          src={`/images/brands/${brand.key}-logo.png`} 
+                          alt={`${brand.name} logo`}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                        <div className="logo-placeholder" style={{ display: 'none' }}>
+                          {brand.name.charAt(0).toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="brand-name">
+                        <strong>{brand.name}</strong>
+                        <span className="brand-key">({brand.key})</span>
+                      </div>
+                      <div className="brand-website">
+                        <a href={brand.url} target="_blank" rel="noopener noreferrer">
+                          {brand.url.replace(/^https?:\/\//, '')}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
