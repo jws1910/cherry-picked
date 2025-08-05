@@ -527,6 +527,24 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loading-container .loading-spinner {
+  margin-bottom: 1rem;
+}
+
+.loading-container p {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+}
+
 .loading-text {
   color: #333;
   font-size: 1.1rem;
@@ -576,34 +594,59 @@ body {
   font-size: 1rem;
 }
 
-.country-header {
+
+
+/* Main Content Tabs */
+.main-tabs {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
+  gap: 0.5rem;
+  margin: 2rem 0;
+  justify-content: center;
   border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
 }
 
-.country-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 1.5rem;
+.main-tab-button {
+  background: none;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
 }
 
-.change-country-btn {
+.main-tab-button:hover {
+  background: #f8f9fa;
+  color: #800020;
+}
+
+.main-tab-button.active {
   background: #800020;
   color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
 }
 
-.change-country-btn:hover {
-  background: #600018;
+.main-tab-button {
+  position: relative;
+}
+
+.unread-badge-tab {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 2px solid white;
 }
 
 .error-message {

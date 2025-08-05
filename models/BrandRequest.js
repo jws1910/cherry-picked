@@ -18,8 +18,8 @@ const brandRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending'
+    enum: ['new brand', 'in progress', 'added', 'rejected'],
+    default: 'new brand'
   },
   adminNotes: {
     type: String,

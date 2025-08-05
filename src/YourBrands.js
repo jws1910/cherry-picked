@@ -3,23 +3,26 @@ import axios from 'axios';
 import brandsConfig from './brands-config.json';
 import './YourBrands.css';
 
-const YourBrands = ({ user, onUpdateUser }) => {
+const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
   const [selectedBrands, setSelectedBrands] = useState(user?.favoriteBrands || []);
+  const [pendingBrands, setPendingBrands] = useState(user?.favoriteBrands || []); // New state for pending changes
   const [showBrandSelector, setShowBrandSelector] = useState(false);
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newBrandWebsite, setNewBrandWebsite] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectionLoading, setSelectionLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // Load favorite brands from database on component mount
   useEffect(() => {
     const loadFavoriteBrands = async () => {
       if (user) {
         try {
-          console.log('Loading favorite brands for user:', user.email);
-          const authToken = localStorage.getItem('authToken');
-          console.log('Auth token for loading:', authToken ? 'Present' : 'Missing');
+          console.log('🔍 Loading favorite brands for user:', user.email);
+          console.log('👤 User ID:', user.id);
+          const authToken = localStorage.getItem('token');
+          console.log('🔑 Auth token for loading:', authToken ? 'Present' : 'Missing');
           
           const response = await axios.get('http://localhost:3001/api/auth/favorite-brands', {
             headers: {
@@ -27,36 +30,41 @@ const YourBrands = ({ user, onUpdateUser }) => {
             }
           });
 
-          console.log('Load response:', response.data);
+          console.log('✅ Load response:', response.data);
 
           if (response.data.success) {
-            console.log('Loaded favorite brands from database:', response.data.favoriteBrands);
+            console.log('📋 Loaded favorite brands from database:', response.data.favoriteBrands);
             setSelectedBrands(response.data.favoriteBrands);
+            setPendingBrands(response.data.favoriteBrands);
+            setHasUnsavedChanges(false);
             // Update user object with favorite brands from database
             const updatedUser = { ...user, favoriteBrands: response.data.favoriteBrands };
             onUpdateUser(updatedUser);
           } else {
-            console.error('Failed to load favorite brands:', response.data);
+            console.error('❌ Failed to load favorite brands:', response.data);
           }
         } catch (error) {
-          console.error('Error loading favorite brands:', error);
-          if (error.response) {
-            console.error('Error response:', error.response.data);
-          }
+          console.error('❌ Error loading favorite brands:', error);
+          console.error('❌ Error response:', error.response?.data);
+          console.error('❌ Error status:', error.response?.status);
+          console.error('❌ Error message:', error.message);
         }
+      } else {
+        console.log('⚠️ No user available for loading favorite brands');
       }
     };
 
     loadFavoriteBrands();
-  }, [user, onUpdateUser]);
+  }, [user?.id]); // Only depend on user ID, not the entire user object or onUpdateUser function
 
   // Save favorite brands to database
   const saveFavoriteBrands = async (brands) => {
     try {
-      console.log('Saving favorite brands to database:', brands);
+      console.log('💾 Saving favorite brands to database:', brands);
+      console.log('👤 User ID:', user?.id);
       setLoading(true);
-      const authToken = localStorage.getItem('authToken');
-      console.log('Auth token:', authToken ? 'Present' : 'Missing');
+      const authToken = localStorage.getItem('token');
+      console.log('🔑 Auth token:', authToken ? 'Present' : 'Missing');
       
       const response = await axios.post('http://localhost:3001/api/auth/favorite-brands', {
         favoriteBrands: brands
@@ -67,30 +75,31 @@ const YourBrands = ({ user, onUpdateUser }) => {
         }
       });
 
-      console.log('Save response:', response.data);
+      console.log('✅ Save response:', response.data);
 
       if (response.data.success) {
         // Update user object with new favorite brands
         const updatedUser = { ...user, favoriteBrands: brands };
         onUpdateUser(updatedUser);
-        console.log('Successfully saved favorite brands to database');
+        console.log('✅ Successfully saved favorite brands to database');
         return true;
       } else {
-        console.error('Failed to save favorite brands:', response.data);
+        console.error('❌ Failed to save favorite brands:', response.data);
         throw new Error('Failed to save favorite brands');
       }
     } catch (error) {
-      console.error('Error saving favorite brands:', error);
-      if (error.response) {
-        console.error('Error response:', error.response.data);
-      }
+      console.error('❌ Error saving favorite brands:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
+      console.error('❌ Error message:', error.message);
       throw error;
     } finally {
       setLoading(false);
+      console.log('🏁 Finished saving favorite brands');
     }
   };
 
-  const handleBrandToggle = async (brandKey) => {
+  const handleBrandToggle = (brandKey) => {
     // Validate brandKey exists in config
     if (!brandsConfig?.brands?.[brandKey]) {
       console.error('Invalid brand key:', brandKey);
@@ -100,51 +109,57 @@ const YourBrands = ({ user, onUpdateUser }) => {
     // Prevent rapid clicking
     if (selectionLoading) return;
 
-    let newSelectedBrands;
-    if (selectedBrands.includes(brandKey)) {
+    let newPendingBrands;
+    if (pendingBrands.includes(brandKey)) {
       // Remove brand
-      newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
-    } else if (selectedBrands.length < 5) {
+      newPendingBrands = pendingBrands.filter(brand => brand !== brandKey);
+    } else if (pendingBrands.length < 10) {
       // Add brand (if under limit)
-      newSelectedBrands = [...selectedBrands, brandKey];
+      newPendingBrands = [...pendingBrands, brandKey];
     } else {
-      // Show feedback when trying to add more than 5 brands
-      alert('You can only select up to 5 brands. Please remove one before adding another.');
+      // Show feedback when trying to add more than 10 brands
+      alert('You can only select up to 10 brands. Please remove one before adding another.');
       return;
     }
     
-    setSelectionLoading(true);
-    setSelectedBrands(newSelectedBrands);
+    setPendingBrands(newPendingBrands);
+    setHasUnsavedChanges(true);
+  };
+
+
+
+  const removeBrand = (brandKey) => {
+    if (selectionLoading) return;
     
+    const newPendingBrands = pendingBrands.filter(brand => brand !== brandKey);
+    setPendingBrands(newPendingBrands);
+    setHasUnsavedChanges(true);
+  };
+
+  const handleSaveChanges = async () => {
+    if (!hasUnsavedChanges) return;
+    
+    setSelectionLoading(true);
     try {
-      await saveFavoriteBrands(newSelectedBrands);
+      await saveFavoriteBrands(pendingBrands);
+      setSelectedBrands(pendingBrands);
+      setHasUnsavedChanges(false);
+      // Update user object with new favorite brands
+      const updatedUser = { ...user, favoriteBrands: pendingBrands };
+      onUpdateUser(updatedUser);
     } catch (error) {
       console.error('Error saving brand selection:', error);
-      // Revert the selection if save failed
-      setSelectedBrands(selectedBrands);
+      // Revert the pending changes if save failed
+      setPendingBrands(selectedBrands);
+      setHasUnsavedChanges(false);
     } finally {
       setSelectionLoading(false);
     }
   };
 
-
-
-  const removeBrand = async (brandKey) => {
-    if (selectionLoading) return;
-    
-    const newSelectedBrands = selectedBrands.filter(brand => brand !== brandKey);
-    setSelectionLoading(true);
-    setSelectedBrands(newSelectedBrands);
-    
-    try {
-      await saveFavoriteBrands(newSelectedBrands);
-    } catch (error) {
-      console.error('Error removing brand:', error);
-      // Revert the selection if save failed
-      setSelectedBrands(selectedBrands);
-    } finally {
-      setSelectionLoading(false);
-    }
+  const handleCancelChanges = () => {
+    setPendingBrands(selectedBrands);
+    setHasUnsavedChanges(false);
   };
 
   const getBrandName = (brandKey) => {
@@ -165,10 +180,28 @@ const YourBrands = ({ user, onUpdateUser }) => {
     }
   };
 
+  const isBrandOnSale = (brandKey) => {
+    if (!allSalesData?.results) return false;
+    const brandData = allSalesData.results.find(result => result.brandKey === brandKey);
+    return brandData?.saleFound || false;
+  };
+
+  const getSaleInfo = (brandKey) => {
+    if (!allSalesData?.results) return null;
+    const brandData = allSalesData.results.find(result => result.brandKey === brandKey);
+    if (!brandData?.saleFound) return null;
+    
+    return {
+      saleText: brandData.saleText || 'Sale',
+      salePercentage: brandData.salePercentage,
+      brandUrl: brandData.brandUrl || getBrandUrl(brandKey)
+    };
+  };
+
   const handleAddBrand = async () => {
     if (newBrandName.trim() && newBrandWebsite.trim()) {
       try {
-        const authToken = localStorage.getItem('authToken');
+        const authToken = localStorage.getItem('token');
         const response = await axios.post('http://localhost:3001/api/brand-requests/submit', {
           brandName: newBrandName.trim(),
           brandWebsite: newBrandWebsite.trim()
@@ -217,7 +250,7 @@ const YourBrands = ({ user, onUpdateUser }) => {
     <div className="your-brands-container">
       <div className="your-brands-header">
         <h2>Your Brands</h2>
-        <p>Track up to 5 of your favorite brands</p>
+        <p>Track up to 10 of your favorite brands</p>
         <button 
           className="manage-brands-btn"
           onClick={() => setShowBrandSelector(!showBrandSelector)}
@@ -229,32 +262,36 @@ const YourBrands = ({ user, onUpdateUser }) => {
       </div>
 
       <div className="your-brands-grid">
-        {selectedBrands.map((brandKey) => (
-          <div key={brandKey} className="favorite-brand-card">
-            <div className="brand-info">
-              <h3>{getBrandName(brandKey)}</h3>
-              <a 
-                href={getBrandUrl(brandKey)} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="brand-link"
-              >
-                Visit Store
-              </a>
+        {selectedBrands.map((brandKey) => {
+          const isOnSale = isBrandOnSale(brandKey);
+          
+          return (
+            <div key={brandKey} className={`favorite-brand-card ${isOnSale ? 'on-sale' : ''}`}>
+              <div className="brand-info">
+                <h3>{getBrandName(brandKey)}</h3>
+                <a 
+                  href={getBrandUrl(brandKey)} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="brand-link"
+                >
+                  Visit Store
+                </a>
+              </div>
+              {showBrandSelector && (
+                <button 
+                  className="remove-brand-btn"
+                  onClick={() => removeBrand(brandKey)}
+                  type="button"
+                >
+                  ×
+                </button>
+              )}
             </div>
-            {showBrandSelector && (
-              <button 
-                className="remove-brand-btn"
-                onClick={() => removeBrand(brandKey)}
-                type="button"
-              >
-                ×
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
         
-        {selectedBrands.length < 5 && (
+        {selectedBrands.length < 10 && (
           <div className="add-brand-card" onClick={() => setShowBrandSelector(true)}>
             <div className="add-brand-content">
               <span className="add-icon">+</span>
@@ -269,9 +306,9 @@ const YourBrands = ({ user, onUpdateUser }) => {
           <div className="brand-selector-content">
             <div className="modal-header">
               <div>
-                <h3>Select Your Brands ({selectedBrands.length}/5)</h3>
+                <h3>Select Your Brands ({pendingBrands.length}/10)</h3>
                 <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.9rem', color: '#666' }}>
-                  Click on brands to add or remove them from your favorites
+                  Click on brands to add or remove them from your favorites. Click "Save Changes" when done.
                 </p>
               </div>
               <button 
@@ -289,7 +326,7 @@ const YourBrands = ({ user, onUpdateUser }) => {
                 .map(([brandKey, brandConfig]) => (
                 <div 
                   key={brandKey} 
-                  className={`available-brand-card ${selectedBrands.includes(brandKey) ? 'selected' : ''} ${selectionLoading ? 'loading' : ''}`}
+                  className={`available-brand-card ${pendingBrands.includes(brandKey) ? 'selected' : ''} ${selectionLoading ? 'loading' : ''}`}
                   onClick={() => handleBrandToggle(brandKey)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -299,12 +336,12 @@ const YourBrands = ({ user, onUpdateUser }) => {
                   }}
                   role="button"
                   tabIndex={0}
-                  aria-label={`${selectedBrands.includes(brandKey) ? 'Remove' : 'Add'} ${brandConfig.name}`}
+                  aria-label={`${pendingBrands.includes(brandKey) ? 'Remove' : 'Add'} ${brandConfig.name}`}
                   style={{ opacity: selectionLoading ? 0.7 : 1, pointerEvents: selectionLoading ? 'none' : 'auto' }}
                 >
                   <h4>{brandConfig.name}</h4>
                   <span className="selection-indicator">
-                    {selectedBrands.includes(brandKey) ? '✓' : ''}
+                    {pendingBrands.includes(brandKey) ? '✓' : ''}
                   </span>
                   {selectionLoading && (
                     <div className="selection-loading">
@@ -322,26 +359,40 @@ const YourBrands = ({ user, onUpdateUser }) => {
               >
                 + Add Brand
               </button>
+              {user?.role === 'customer' && (
+                <button 
+                  className="request-brand-btn"
+                  onClick={handleAddBrandClick}
+                  type="button"
+                >
+                  📝 Request New Brand
+                </button>
+              )}
             </div>
             <div className="modal-actions">
-              <button 
-                className="save-changes-btn"
-                onClick={async () => {
-                  await saveFavoriteBrands(selectedBrands);
-                  setShowBrandSelector(false);
-                }}
-                type="button"
-                disabled={loading}
-              >
-                {loading ? 'Saving...' : 'Save Changes'}
-              </button>
-              <button 
-                className="cancel-btn"
-                onClick={() => setShowBrandSelector(false)}
-                type="button"
-              >
-                Cancel
-              </button>
+              {hasUnsavedChanges && (
+                <div className="unsaved-changes-indicator">
+                  <span>⚠️ You have unsaved changes</span>
+                </div>
+              )}
+              <div className="button-group">
+                <button 
+                  className="save-changes-btn"
+                  onClick={handleSaveChanges}
+                  type="button"
+                  disabled={selectionLoading || !hasUnsavedChanges}
+                >
+                  {selectionLoading ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button 
+                  className="cancel-btn"
+                  onClick={handleCancelChanges}
+                  type="button"
+                  disabled={selectionLoading}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -352,7 +403,7 @@ const YourBrands = ({ user, onUpdateUser }) => {
         <div className="brand-selector-modal">
           <div className="brand-selector-content">
             <div className="modal-header">
-              <h3>Add New Brand</h3>
+              <h3>{user?.role === 'admin' ? 'Add New Brand' : 'Request New Brand'}</h3>
               <button 
                 className="close-modal-btn"
                 onClick={() => setShowAddBrandModal(false)}

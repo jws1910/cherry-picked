@@ -1,6 +1,7 @@
 const express = require('express');
 const BrandRequest = require('../models/BrandRequest');
 const User = require('../models/User');
+const requireAdmin = require('../middleware/adminAuth');
 const router = express.Router();
 
 // Submit a new brand request
@@ -56,21 +57,8 @@ router.post('/submit', async (req, res) => {
 });
 
 // Get all brand requests (admin only)
-router.get('/admin/all', async (req, res) => {
+router.get('/admin/all', requireAdmin, async (req, res) => {
   try {
-    const userId = req.user.userId;
-    
-    // Check if user is admin (you can implement admin role checking here)
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    // For now, allow any authenticated user to view requests
-    // In production, you'd check for admin role
     const brandRequests = await BrandRequest.find()
       .populate('requestedBy', 'firstName lastName email')
       .populate('processedBy', 'firstName lastName')
@@ -100,7 +88,7 @@ router.get('/admin/all', async (req, res) => {
 });
 
 // Update brand request status (admin only)
-router.put('/admin/:requestId', async (req, res) => {
+router.put('/admin/:requestId', requireAdmin, async (req, res) => {
   try {
     const { requestId } = req.params;
     const { status, adminNotes } = req.body;

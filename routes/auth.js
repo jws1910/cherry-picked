@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const Notification = require('../models/Notification');
 const router = express.Router();
 
 // Authentication middleware
@@ -77,6 +78,9 @@ router.post('/register', async (req, res) => {
     await user.save();
     console.log('User registered successfully:', user.email);
 
+    // Get unread notifications count (will be 0 for new users)
+    const unreadNotificationsCount = await Notification.getUnreadCount(user._id);
+
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -85,7 +89,12 @@ router.post('/register', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role,
         favoriteBrands: user.favoriteBrands,
+        privacySettings: user.privacySettings,
+        friendsCount: user.friends.length,
+        pendingRequestsCount: user.receivedFriendRequests.length,
+        unreadNotificationsCount,
         isFirstLogin: true
       }
     });
@@ -145,6 +154,9 @@ router.post('/login', async (req, res) => {
     user.lastLogin = new Date();
     await user.save();
 
+    // Get unread notifications count
+    const unreadNotificationsCount = await Notification.getUnreadCount(user._id);
+
     // Generate JWT token
     const jwt = require('jsonwebtoken');
     const token = jwt.sign(
@@ -162,7 +174,12 @@ router.post('/login', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role,
         favoriteBrands: user.favoriteBrands,
+        privacySettings: user.privacySettings,
+        friendsCount: user.friends.length,
+        pendingRequestsCount: user.receivedFriendRequests.length,
+        unreadNotificationsCount,
         isFirstLogin
       }
     });
@@ -176,7 +193,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Get user profile
-router.get('/profile', async (req, res) => {
+router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
     const user = await User.findById(userId).select('-password');
@@ -188,6 +205,9 @@ router.get('/profile', async (req, res) => {
       });
     }
 
+    // Get unread notifications count
+    const unreadNotificationsCount = await Notification.getUnreadCount(user._id);
+
     res.json({
       success: true,
       user: {
@@ -195,7 +215,12 @@ router.get('/profile', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        role: user.role,
         favoriteBrands: user.favoriteBrands,
+        privacySettings: user.privacySettings,
+        friendsCount: user.friends.length,
+        pendingRequestsCount: user.receivedFriendRequests.length,
+        unreadNotificationsCount,
         isFirstLogin: false // Profile endpoint is for existing users
       }
     });
@@ -222,10 +247,10 @@ router.post('/favorite-brands', authenticateToken, async (req, res) => {
       });
     }
 
-    if (favoriteBrands.length > 5) {
+    if (favoriteBrands.length > 10) {
       return res.status(400).json({
         success: false,
-        message: 'Cannot have more than 5 favorite brands'
+        message: 'Cannot have more than 10 favorite brands'
       });
     }
 

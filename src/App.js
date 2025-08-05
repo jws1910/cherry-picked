@@ -8,11 +8,15 @@ import countryConfig from './country-config.json';
 import CountrySelector from './CountrySelector';
 import Login from './Login';
 import YourBrands from './YourBrands';
-import SearchBar from './SearchBar';
+// import SearchBar from './SearchBar';
 import HeroBanner from './HeroBanner';
 import LoadingPage from './LoadingPage';
 import SaleTypeMenu from './SaleTypeMenu';
 import AdminPanel from './AdminPanel';
+import NotificationBell from './NotificationBell';
+import FriendManager from './FriendManager';
+import ChatManager from './ChatManager';
+import ForumManager from './ForumManager';
 
 function App() {
   const [allSalesData, setAllSalesData] = useState(null);
@@ -26,23 +30,28 @@ function App() {
     return localStorage.getItem('selectedCountry') || null;
   });
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [activeTab, setActiveTab] = useState('sales');
+  const [totalUnreadChats, setTotalUnreadChats] = useState(0);
+  const [selectedFriendId, setSelectedFriendId] = useState(null);
 
   const checkAllSales = async () => {
+    // Prevent multiple simultaneous requests
+    if (loading) return;
+    
     setLoading(true);
     setError(null);
     
     try {
-      const authToken = localStorage.getItem('authToken');
+      const token = localStorage.getItem('token');
       const response = await axios.get(`http://localhost:3001/api/check-all-sales?country=${selectedCountry}`, {
         headers: {
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${token}`
         },
         timeout: 120000 // 2 minutes timeout for the entire request
       });
 
       if (response.data.success) {
         setAllSalesData(response.data);
-
         setLastRefresh(new Date());
       } else {
         setError('Failed to fetch sales data. Please try again.');
@@ -68,20 +77,15 @@ function App() {
     setError(null);
   };
 
-  const handleCountryChange = () => {
-    setSelectedCountry(null);
-    localStorage.removeItem('selectedCountry');
-    setAllSalesData(null);
-    setError(null);
-  };
+
 
   const handleLogin = async (userData) => {
     try {
       // Load complete user profile from database
-      const authToken = localStorage.getItem('authToken');
+      const token = localStorage.getItem('token');
       const response = await axios.get('http://localhost:3001/api/auth/profile', {
         headers: {
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -101,9 +105,10 @@ function App() {
   };
 
   const handleLogout = () => {
+    console.log('🚪 Logging out user...');
     // Clear all localStorage first
     localStorage.removeItem('cherryUser');
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     localStorage.removeItem('selectedCountry');
     
     // Clear all state
@@ -115,6 +120,7 @@ function App() {
     setLoading(false);
     setLastRefresh(null);
     setSelectedSaleType('all');
+    console.log('✅ Logout complete');
   };
 
   const handleUpdateUser = (updatedUser) => {
@@ -129,9 +135,47 @@ function App() {
     setSelectedSaleType(saleType);
   };
 
-  const handleSearchResult = (result) => {
-    // Handle search results if needed
-  };
+  // const handleSearchResult = (result) => {
+  //   // Handle search results if needed
+  // };
+
+  // Check authentication status on app load
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      console.log('🔍 Checking authentication status on app load...');
+      const token = localStorage.getItem('token');
+      console.log('🔑 Token found:', !!token);
+      
+      if (token) {
+        try {
+          console.log('📡 Making authentication request...');
+          const response = await axios.get('http://localhost:3001/api/auth/profile', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (response.data.success) {
+            setUser(response.data.user);
+            console.log('✅ User authenticated on page load:', response.data.user.email);
+          } else {
+            console.log('❌ Invalid token, clearing localStorage');
+            localStorage.removeItem('token');
+            setUser(null);
+          }
+        } catch (error) {
+          console.log('❌ Authentication check failed:', error.response?.status, error.message);
+          localStorage.removeItem('token');
+          setUser(null);
+        }
+      } else {
+        console.log('🔑 No token found in localStorage');
+        setUser(null);
+      }
+    };
+
+    checkAuthStatus();
+  }, []); // Only run once on app load
 
   useEffect(() => {
     // Only check for sales if a country is selected and user is logged in
@@ -145,7 +189,7 @@ function App() {
       
       return () => clearInterval(interval);
     }
-  }, [selectedCountry, user]);
+  }, [selectedCountry, user?.id]); // Only depend on user ID, not the entire user object
 
   const renderBrandCard = (brandData) => {
     const brandImageConfig = brandImagesConfig.brandImages[brandData.brandKey];
@@ -235,6 +279,16 @@ function App() {
       'black-friday': 'Black Friday Sale',
       'christmas': 'Christmas Sale',
       'summer': 'Summer Sale',
+      'refer-get': 'Refer & Get X% Sale',
+      'buy-one-get-one': 'Buy One Get One Sale',
+      'ten-percent': 'Up to 10% Off Sale',
+      'eleven-twenty': '11-20% Off Sale',
+      'twenty-one-thirty': '21-30% Off Sale',
+      'thirty-one-forty': '31-40% Off Sale',
+      'forty-one-fifty': '41-50% Off Sale',
+      'fifty-one-sixty': '51-60% Off Sale',
+      'sixty-one-seventy': '61-70% Off Sale',
+      'seventy-one-eighty': '71-80% Off Sale',
       'other-sales': 'Other Sales'
     };
     return categoryNames[categoryKey] || categoryKey;
@@ -252,7 +306,7 @@ function App() {
 
   // Show admin panel if requested
   if (showAdminPanel) {
-    return <AdminPanel onBack={() => setShowAdminPanel(false)} />;
+    return <AdminPanel onBack={() => setShowAdminPanel(false)} user={user} />;
   }
 
   return (
@@ -271,13 +325,7 @@ function App() {
                 <h1 className="app-brand-name">cherry-picked</h1>
               </div>
               <div className="header-actions">
-                <button 
-                  className="country-change-btn"
-                  onClick={handleCountryChange}
-                  title="Change country"
-                >
-                  {countryConfig.countries[selectedCountry]?.flag || '🇺🇸'} {countryConfig.countries[selectedCountry]?.name || 'United States'}
-                </button>
+                <NotificationBell />
                 <button 
                   className="logout-btn"
                   onClick={handleLogout}
@@ -289,7 +337,6 @@ function App() {
             </div>
             <p>Your Curated Compass for Fashion Sales</p>
             <div className="refresh-info">
-              <span>Auto-refresh every 24 hours</span>
               {lastRefresh && (
                 <span className="last-refresh">
                   Last updated: {lastRefresh.toLocaleString()}
@@ -299,6 +346,7 @@ function App() {
           </>
         ) : (
           <div className="header-actions">
+            <NotificationBell />
             <button 
               className="admin-btn"
               onClick={() => setShowAdminPanel(true)}
@@ -322,16 +370,54 @@ function App() {
 
         {user && selectedCountry && !showLoadingPage && (
           <>
-            <div className="country-header">
-              <h2>Sales in {countryConfig.countries[selectedCountry]?.name || 'United States'}</h2>
-              <button onClick={handleCountryChange} className="change-country-btn">
-                Change Country
+            <YourBrands user={user} onUpdateUser={handleUpdateUser} allSalesData={allSalesData} />
+            
+            {/* Main Content Tabs */}
+            <div className="main-tabs">
+              <button 
+                className={`main-tab-button ${activeTab === 'sales' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('sales');
+                  setSelectedFriendId(null);
+                }}
+              >
+                Sales
+              </button>
+              <button 
+                className={`main-tab-button ${activeTab === 'friends' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('friends');
+                  setSelectedFriendId(null);
+                }}
+              >
+                Friends
+              </button>
+              <button 
+                className={`main-tab-button ${activeTab === 'chats' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('chats');
+                  setSelectedFriendId(null);
+                }}
+              >
+                Chats
+                {totalUnreadChats > 0 && (
+                  <span className="unread-badge-tab">{totalUnreadChats}</span>
+                )}
+              </button>
+              <button 
+                className={`main-tab-button ${activeTab === 'forum' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('forum');
+                  setSelectedFriendId(null);
+                }}
+              >
+                Forum
               </button>
             </div>
-
-            <YourBrands user={user} onUpdateUser={handleUpdateUser} />
             
-            {loading ? (
+            {activeTab === 'sales' && (
+              <>
+                {loading ? (
               <div className="loading-spinner-container">
                 <div className="loading-spinner"></div>
                 <p className="loading-text">Checking all brands for sales...</p>
@@ -339,9 +425,13 @@ function App() {
               </div>
             ) : allSalesData ? (
               <>
+                {console.log('📊 Sales data received:', allSalesData)}
+                {console.log('📊 Categorized results:', allSalesData.categorizedResults)}
+                {console.log('📊 Available categories:', Object.keys(allSalesData.categorizedResults || {}))}
                 <SaleTypeMenu 
                   selectedSaleType={selectedSaleType} 
-                  onSaleTypeChange={handleSaleTypeChange} 
+                  onSaleTypeChange={handleSaleTypeChange}
+                  allSalesData={allSalesData}
                 />
                 
                 {error && (
@@ -376,13 +466,48 @@ function App() {
                       )}
                     </div>
                   );
-                })}
+                }                )}
               </>
             ) : (
               <div className="no-data-message">
-                <p>No sales data available. Please wait while we check for sales...</p>
+                {loading ? (
+                  <div className="loading-container">
+                    <div className="loading-spinner"></div>
+                    <p>Checking for sales...</p>
+                  </div>
+                ) : (
+                  <p>No sales data available. Please wait while we check for sales...</p>
+                )}
               </div>
             )}
+              </>
+            )}
+            
+            {activeTab === 'friends' && (
+              <FriendManager 
+                user={user} 
+                onUpdateUser={handleUpdateUser} 
+                onSwitchToChats={(friendId) => {
+                  setActiveTab('chats');
+                  setSelectedFriendId(friendId);
+                }}
+              />
+            )}
+            
+                    {activeTab === 'chats' && (
+          <ChatManager
+            user={user}
+            onUpdateUser={handleUpdateUser}
+            onUnreadCountChange={setTotalUnreadChats}
+            selectedFriendId={selectedFriendId}
+          />
+        )}
+        {activeTab === 'forum' && (
+          <ForumManager
+            user={user}
+            onUpdateUser={handleUpdateUser}
+          />
+        )}
           </>
         )}
       </header>
@@ -418,15 +543,22 @@ function App() {
                 </div>
               )}
               
-              {allSalesData?.categorizedResults && Object.entries(allSalesData.categorizedResults).map(([categoryKey, sales]) => (
-                <div key={categoryKey}>
-                  {renderSaleSection(
-                    getCategoryDisplayName(categoryKey),
-                    sales,
-                    categoryKey
-                  )}
-                </div>
-              ))}
+              {allSalesData?.categorizedResults && Object.entries(allSalesData.categorizedResults)
+                .sort(([aKey], [bKey]) => {
+                  // Put "other-sales" at the end
+                  if (aKey === 'other-sales') return 1;
+                  if (bKey === 'other-sales') return -1;
+                  return 0;
+                })
+                .map(([categoryKey, sales]) => (
+                  <div key={categoryKey}>
+                    {renderSaleSection(
+                      getCategoryDisplayName(categoryKey),
+                      sales,
+                      categoryKey
+                    )}
+                  </div>
+                ))}
               
               {allSalesData?.categorizedResults && Object.values(allSalesData.categorizedResults).every(sales => !sales || sales.length === 0) && (
                 <div className="no-sales">

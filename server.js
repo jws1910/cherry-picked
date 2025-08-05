@@ -8,6 +8,12 @@ const jwt = require('jsonwebtoken');
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
 const brandRequestRoutes = require('./routes/brandRequests');
+const friendRoutes = require('./routes/friends');
+const notificationRoutes = require('./routes/notifications');
+const chatRoutes = require('./routes/chats');
+const forumRoutes = require('./routes/forum');
+const brandRoutes = require('./routes/brands');
+const brandSaleDetector = require('./services/brandSaleDetector');
 
 const app = express();
 const PORT = 3001;
@@ -46,11 +52,50 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-// Auth routes
+// Initialize brand sale detector
+brandSaleDetector.initialize().catch(error => {
+  console.error('Error initializing brand sale detector:', error);
+});
+
+// Auth routes (no authentication required)
 app.use('/api/auth', authRoutes);
 
-// Brand request routes
+// Protected routes (require authentication)
 app.use('/api/brand-requests', authenticateToken, brandRequestRoutes);
+app.use('/api/friends', authenticateToken, friendRoutes);
+app.use('/api/notifications', authenticateToken, notificationRoutes);
+app.use('/api/chats', authenticateToken, chatRoutes);
+app.use('/api/forum', authenticateToken, forumRoutes);
+app.use('/api/brands', authenticateToken, brandRoutes);
+
+// Test endpoint to simulate a brand sale (for testing purposes)
+app.post('/api/test-brand-sale', authenticateToken, async (req, res) => {
+  try {
+    const { brandKey } = req.body;
+    
+    if (!brandKey) {
+      return res.status(400).json({
+        success: false,
+        message: 'Brand key is required'
+      });
+    }
+
+    // Simulate a sale detection
+    const saleStarted = await brandSaleDetector.updateBrandStatus(brandKey, true, 'https://example.com/sale');
+    
+    res.json({
+      success: true,
+      message: saleStarted ? 'Sale notification sent!' : 'No sale change detected',
+      brandKey
+    });
+  } catch (error) {
+    console.error('Test brand sale error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error testing brand sale'
+    });
+  }
+});
 
 // Load brands configuration
 const configPath = path.join(__dirname, 'brands-config.json');
@@ -300,6 +345,30 @@ async function scrapeBrand(brandKey, brandConfig) {
         cleanSaleText = cleanSaleText.trim();
       }
       
+      // Check for sale status change and notify users if needed
+      if (saleFound) {
+        try {
+          const saleStarted = await brandSaleDetector.updateBrandStatus(
+            brandKey, 
+            true, 
+            brandConfig.url
+          );
+          
+          if (saleStarted) {
+            console.log(`🎉 Sale started for ${brandConfig.name}! Notifications sent.`);
+          }
+        } catch (error) {
+          console.error(`Error updating brand sale status for ${brandKey}:`, error);
+        }
+      } else {
+        // Update status even if no sale (to track when sales end)
+        try {
+          await brandSaleDetector.updateBrandStatus(brandKey, false);
+        } catch (error) {
+          console.error(`Error updating brand sale status for ${brandKey}:`, error);
+        }
+      }
+
       return {
         brandKey,
         brandName: brandConfig.name,

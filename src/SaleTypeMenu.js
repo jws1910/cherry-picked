@@ -7,11 +7,15 @@ const SaleTypeMenu = ({ selectedSaleType, onSaleTypeChange, allSalesData }) => {
 
   // Get available sale types based on actual sales data
   const getAvailableSaleTypes = () => {
+    console.log('🔍 SaleTypeMenu - allSalesData:', allSalesData);
+    console.log('🔍 SaleTypeMenu - categorizedResults:', allSalesData?.categorizedResults);
+    
     const baseTypes = [
       { key: 'all', label: 'All Sales', icon: '🛍️' }
     ];
 
     if (!allSalesData || !allSalesData.categorizedResults) {
+      console.log('⚠️ No sales data available for menu');
       return baseTypes;
     }
 
@@ -19,27 +23,60 @@ const SaleTypeMenu = ({ selectedSaleType, onSaleTypeChange, allSalesData }) => {
     
     // Check which categories actually have sales
     const categoryMapping = {
-      'flash-sale': { label: 'Flash Sales', icon: '⚡' },
-      'end-of-season': { label: 'End of Season', icon: '🏁' },
-      'student-sale': { label: 'Student Deals', icon: '🎓' },
-      'black-friday': { label: 'Black Friday', icon: '🖤' },
-      'cyber-monday': { label: 'Cyber Monday', icon: '💻' },
-      'final-markdown': { label: 'Final Markdown', icon: '🏷️' },
-      'fifty-percent': { label: '50% Off', icon: '5️⃣0️⃣' },
-      'sixty-percent': { label: '60% Off', icon: '6️⃣0️⃣' },
-      'seventy-percent': { label: '70% Off', icon: '7️⃣0️⃣' }
+      'flash-sale': { label: 'Flash Sales', icon: '⚡', order: 1 },
+      'end-of-season': { label: 'End of Season', icon: '🏁', order: 2 },
+      'student-sale': { label: 'Student Deals', icon: '🎓', order: 3 },
+      'black-friday': { label: 'Black Friday', icon: '🖤', order: 4 },
+      'cyber-monday': { label: 'Cyber Monday', icon: '💻', order: 5 },
+      'final-markdown': { label: 'Final Markdown', icon: '🏷️', order: 6 },
+      'refer-get': { label: 'Refer & Get X%', icon: '🎁', order: 7 },
+      'buy-one-get-one': { label: 'Buy One Get One', icon: '2️⃣4️⃣1️⃣', order: 8 },
+      'ten-percent': { label: 'Up to 10% Off', icon: '1️⃣0️⃣', order: 9 },
+      'eleven-twenty': { label: '11-20% Off', icon: '1️⃣1️⃣-2️⃣0️⃣', order: 10 },
+      'twenty-one-thirty': { label: '21-30% Off', icon: '2️⃣1️⃣-3️⃣0️⃣', order: 11 },
+      'thirty-one-forty': { label: '31-40% Off', icon: '3️⃣1️⃣-4️⃣0️⃣', order: 12 },
+      'forty-one-fifty': { label: '41-50% Off', icon: '4️⃣1️⃣-5️⃣0️⃣', order: 13 },
+      'fifty-one-sixty': { label: '51-60% Off', icon: '5️⃣1️⃣-6️⃣0️⃣', order: 14 },
+      'sixty-one-seventy': { label: '61-70% Off', icon: '6️⃣1️⃣-7️⃣0️⃣', order: 15 },
+      'seventy-one-eighty': { label: '71-80% Off', icon: '7️⃣1️⃣-8️⃣0️⃣', order: 16 },
+      'fifty-percent': { label: '50% Off', icon: '5️⃣0️⃣', order: 17 },
+      'sixty-percent': { label: '60% Off', icon: '6️⃣0️⃣', order: 18 },
+      'seventy-percent': { label: '70% Off', icon: '7️⃣0️⃣', order: 19 },
+      'other-sales': { label: 'Other Sales', icon: '📦', order: 20 }
     };
 
+    console.log('🔍 Checking categories:', Object.keys(allSalesData.categorizedResults));
+    
     Object.entries(allSalesData.categorizedResults).forEach(([categoryKey, sales]) => {
+      console.log(`🔍 Category ${categoryKey}:`, sales?.length, 'sales');
       if (sales && sales.length > 0 && categoryMapping[categoryKey]) {
+        console.log(`✅ Adding category: ${categoryKey}`);
         availableTypes.push({
           key: categoryKey,
           label: categoryMapping[categoryKey].label,
-          icon: categoryMapping[categoryKey].icon
+          icon: categoryMapping[categoryKey].icon,
+          order: categoryMapping[categoryKey].order
+        });
+      } else if (sales && sales.length > 0) {
+        console.log(`⚠️ Category ${categoryKey} has ${sales.length} sales but no mapping`);
+        // Add unmapped categories as "Other Sales" at the end
+        availableTypes.push({
+          key: categoryKey,
+          label: 'Other Sales',
+          icon: '📦',
+          order: 999 // High order to put at end
         });
       }
     });
 
+    // Sort by order, with "All Sales" always first
+    availableTypes.sort((a, b) => {
+      if (a.key === 'all') return -1;
+      if (b.key === 'all') return 1;
+      return (a.order || 999) - (b.order || 999);
+    });
+
+    console.log('📋 Final available types (sorted):', availableTypes);
     return availableTypes;
   };
 

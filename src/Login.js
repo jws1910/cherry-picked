@@ -79,8 +79,7 @@ const Login = ({ onLogin }) => {
 
         if (response.data.success) {
           const user = response.data.user;
-          localStorage.setItem('cherryUser', JSON.stringify(user));
-          localStorage.setItem('authToken', response.data.token);
+          localStorage.setItem('token', response.data.token);
           onLogin(user);
         }
       } else {
@@ -110,8 +109,7 @@ const Login = ({ onLogin }) => {
 
         if (response.data.success) {
           const user = response.data.user;
-          localStorage.setItem('cherryUser', JSON.stringify(user));
-          localStorage.setItem('authToken', response.data.token);
+          localStorage.setItem('token', response.data.token);
           onLogin(user);
         }
       }

@@ -51,6 +51,8 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .favorite-brand-card {
@@ -69,10 +71,8 @@
 }
 
 .favorite-brand-card.on-sale {
+  background: rgba(128, 0, 32, 0.05);
   border-color: #800020;
-  background: #800020;
-  color: white;
-  transition: none;
 }
 
 .brand-info h3 {
@@ -82,10 +82,7 @@
   margin: 0 0 0.5rem 0;
 }
 
-.favorite-brand-card.on-sale .brand-info h3 {
-  color: white;
-  transition: none;
-}
+
 
 .brand-link {
   color: #800020;
@@ -95,10 +92,7 @@
   transition: color 0.3s ease;
 }
 
-.favorite-brand-card.on-sale .brand-link {
-  color: white;
-  transition: none;
-}
+
 
 .brand-link:hover {
   color: #600018;
@@ -256,7 +250,7 @@
 
 .available-brands-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
   max-height: 50vh;
   overflow-y: auto;
@@ -362,11 +356,28 @@
 
 .modal-actions {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid #f0f0f0;
+}
+
+.unsaved-changes-indicator {
+  text-align: center;
+  padding: 0.75rem;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.modal-actions .button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .save-changes-btn {
@@ -433,6 +444,25 @@
   box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
 }
 
+.request-brand-btn {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.request-brand-btn:hover {
+  background: #138496;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
 .add-brand-form {
   padding: 1rem 0;
 }
@@ -486,12 +516,12 @@
 
 @media (max-width: 768px) {
   .your-brands-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
   
   .available-brands-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     max-height: 40vh;
   }
   

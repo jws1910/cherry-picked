@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .admin-header {
@@ -11,7 +10,7 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #800020;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .admin-header-left {
@@ -21,23 +20,23 @@
 }
 
 .back-btn {
-  background: #6c757d;
-  color: white;
+  background: none;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  color: #666;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: color 0.3s ease;
 }
 
 .back-btn:hover {
-  background: #5a6268;
+  color: #800020;
 }
 
 .admin-header h1 {
-  color: #333;
   margin: 0;
+  color: #800020;
   font-size: 2rem;
 }
 
@@ -46,45 +45,64 @@
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .refresh-btn:hover {
   background: #600018;
+  transform: translateY(-1px);
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-tab-button {
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.admin-tab-button:hover {
+  color: #800020;
+  border-bottom-color: #800020;
+}
+
+.admin-tab-button.active {
+  color: #800020;
+  border-bottom-color: #800020;
+  background: rgba(128, 0, 32, 0.05);
 }
 
 .brand-requests-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.no-requests {
-  text-align: center;
-  padding: 3rem;
-  color: #666;
-  font-size: 1.1rem;
+  margin-top: 2rem;
 }
 
 .requests-list {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .request-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  background: white;
+  border-radius: 12px;
   padding: 1.5rem;
-  background: #fafafa;
-  transition: box-shadow 0.3s ease;
-}
-
-.request-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
 }
 
 .request-header {
@@ -101,9 +119,9 @@
 }
 
 .status-badge {
-  color: white;
-  padding: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
   border-radius: 20px;
+  color: white;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -115,7 +133,7 @@
 
 .request-details p {
   margin: 0.5rem 0;
-  color: #555;
+  color: #666;
   font-size: 0.9rem;
 }
 
@@ -129,27 +147,25 @@
 }
 
 .request-actions {
-  border-top: 1px solid #e0e0e0;
-  padding-top: 1rem;
   margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
 }
 
 .admin-notes {
   width: 100%;
-  min-height: 80px;
   padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-family: inherit;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
   font-size: 0.9rem;
   resize: vertical;
   margin-bottom: 1rem;
+  font-family: inherit;
 }
 
 .admin-notes:focus {
   outline: none;
   border-color: #800020;
-  box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.1);
 }
 
 .action-buttons {
@@ -157,19 +173,33 @@
   gap: 1rem;
 }
 
-.approve-btn, .reject-btn {
-  padding: 0.5rem 1rem;
+.progress-btn {
+  background: #17a2b8;
+  color: white;
   border: none;
-  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   transition: all 0.3s ease;
+}
+
+.progress-btn:hover {
+  background: #138496;
+  transform: translateY(-1px);
 }
 
 .approve-btn {
   background: #28a745;
   color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .approve-btn:hover {
@@ -180,11 +210,24 @@
 .reject-btn {
   background: #dc3545;
   color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .reject-btn:hover {
   background: #c82333;
   transform: translateY(-1px);
+}
+
+.no-requests {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
 }
 
 .loading-spinner-container {
@@ -215,11 +258,128 @@
   color: #c33;
   padding: 1rem;
   border-radius: 8px;
+  margin-bottom: 1rem;
   border: 1px solid #fcc;
-  text-align: center;
-  margin: 2rem 0;
 }
 
+/* Brands Tab Styles */
+.brands-container {
+  margin-top: 2rem;
+}
+
+.add-brand-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+}
+
+.add-brand-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.add-brand-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 2px solid #f0f0f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #800020;
+}
+
+.add-brand-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-brand-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+}
+
+.brands-list {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f0f0f0;
+}
+
+.brands-list h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.brand-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+}
+
+.brand-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.brand-card p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.brand-card a {
+  color: #800020;
+  text-decoration: none;
+}
+
+.brand-card a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .admin-panel {
     padding: 1rem;
@@ -228,20 +388,22 @@
   .admin-header {
     flex-direction: column;
     gap: 1rem;
-    text-align: center;
+    align-items: flex-start;
   }
   
-  .admin-header h1 {
-    font-size: 1.5rem;
+  .admin-tabs {
+    flex-direction: column;
+  }
+  
+  .add-brand-form {
+    grid-template-columns: 1fr;
   }
   
   .action-buttons {
     flex-direction: column;
   }
   
-  .request-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
+  .brands-grid {
+    grid-template-columns: 1fr;
   }
 } 
