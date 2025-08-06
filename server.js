@@ -14,8 +14,10 @@ const chatRoutes = require('./routes/chats');
 const forumRoutes = require('./routes/forum');
 const brandRoutes = require('./routes/brands');
 const styleRoutes = require('./routes/style');
+const brandDiscoveryRoutes = require('./routes/brandDiscovery');
 const brandSaleDetector = require('./services/brandSaleDetector');
 const aiRecommendationService = require('./services/aiRecommendationService');
+const brandDiscoveryService = require('./services/brandDiscoveryService');
 
 const app = express();
 const PORT = 3001;
@@ -70,6 +72,7 @@ app.use('/api/chats', authenticateToken, chatRoutes);
 app.use('/api/forum', authenticateToken, forumRoutes);
 app.use('/api/brands', authenticateToken, brandRoutes);
 app.use('/api/style', authenticateToken, styleRoutes);
+app.use('/api/discovery', authenticateToken, brandDiscoveryRoutes);
 
 // Test endpoint to simulate a brand sale (for testing purposes)
 app.post('/api/test-brand-sale', authenticateToken, async (req, res) => {

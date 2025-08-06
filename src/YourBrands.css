@@ -514,6 +514,191 @@
   font-style: italic;
 }
 
+/* Newly Discovered Brands Styles */
+.discovered-brands-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(128, 0, 32, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(128, 0, 32, 0.1);
+}
+
+.discovered-brands-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.discovered-brands-header h3 {
+  color: #800020;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.discovered-brands-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.discovered-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.discovered-brand-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 2px solid rgba(128, 0, 32, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.discovered-brand-card:hover {
+  border-color: rgba(128, 0, 32, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.1);
+}
+
+.discovered-brand-card.liked {
+  border-color: rgba(128, 0, 32, 0.4);
+  background: rgba(128, 0, 32, 0.02);
+}
+
+.discovered-brand-card.added_to_favorites {
+  border-color: #800020;
+  background: rgba(128, 0, 32, 0.05);
+}
+
+.discovered-brand-info h4 {
+  color: #800020;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.discovery-reason {
+  color: #800020;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.brand-description {
+  color: #666;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.trending-badge {
+  display: inline-block;
+  background: rgba(255, 87, 34, 0.1);
+  color: #ff5722;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-top: 0.5rem;
+}
+
+.discovery-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.discovery-action-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.discovery-action-btn:hover {
+  background: rgba(128, 0, 32, 0.8);
+  transform: translateY(-1px);
+}
+
+.discovery-action-btn.like-btn {
+  background: rgba(128, 0, 32, 0.7);
+}
+
+.discovery-action-btn.add-btn {
+  background: #800020;
+}
+
+.discovery-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.discovery-status span {
+  color: #800020;
+  font-weight: 500;
+}
+
+.discovery-loading {
+  text-align: center;
+  padding: 1rem;
+  color: #666;
+  font-style: italic;
+}
+
+.generate-discoveries-section {
+  margin-top: 2rem;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(128, 0, 32, 0.02);
+  border-radius: 12px;
+  border: 2px dashed rgba(128, 0, 32, 0.2);
+}
+
+.generate-discoveries-section h3 {
+  color: #800020;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.generate-discoveries-section p {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.generate-discoveries-btn {
+  background: #800020;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.generate-discoveries-btn:hover {
+  background: rgba(128, 0, 32, 0.8);
+  transform: translateY(-2px);
+}
+
+.generate-discoveries-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile responsiveness */
 @media (max-width: 768px) {
   .your-brands-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -569,5 +754,17 @@
   
   .your-brands-header h2 {
     font-size: 1.5rem;
+  }
+
+  .discovered-brands-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .discovery-actions {
+    justify-content: center;
+  }
+  
+  .generate-discoveries-section {
+    padding: 1.5rem 1rem;
   }
 } 

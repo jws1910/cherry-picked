@@ -10,9 +10,12 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
   const [showAddBrandModal, setShowAddBrandModal] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newBrandWebsite, setNewBrandWebsite] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectionLoading, setSelectionLoading] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [requestBrandSubmitting, setRequestBrandSubmitting] = useState(false);
+  const [newlyDiscoveredBrands, setNewlyDiscoveredBrands] = useState([]);
+  const [discoveryLoading, setDiscoveryLoading] = useState(false);
 
   // Load favorite brands from database on component mount
   useEffect(() => {
@@ -56,6 +59,35 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
 
     loadFavoriteBrands();
   }, [user?.id]); // Only depend on user ID, not the entire user object or onUpdateUser function
+
+  // Load newly discovered brands
+  useEffect(() => {
+    const loadNewlyDiscoveredBrands = async () => {
+      if (user) {
+        try {
+          setDiscoveryLoading(true);
+          const authToken = localStorage.getItem('token');
+          
+          const response = await axios.get('http://localhost:3001/api/discovery/current', {
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+
+          if (response.data.success) {
+            console.log('✨ Loaded newly discovered brands:', response.data.discoveries);
+            setNewlyDiscoveredBrands(response.data.discoveries);
+          }
+        } catch (error) {
+          console.error('❌ Error loading discovered brands:', error);
+        } finally {
+          setDiscoveryLoading(false);
+        }
+      }
+    };
+
+    loadNewlyDiscoveredBrands();
+  }, [user?.id]);
 
   // Save favorite brands to database
   const saveFavoriteBrands = async (brands) => {
@@ -234,6 +266,81 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
     setShowAddBrandModal(true);
   };
 
+  // Handle discovery brand interactions
+  const handleDiscoveryAction = async (brandId, action) => {
+    try {
+      const authToken = localStorage.getItem('token');
+      
+      if (action === 'add_to_favorites') {
+        // Add to favorite brands
+        const newPendingBrands = [...pendingBrands, brandId];
+        if (newPendingBrands.length <= 10) {
+          setPendingBrands(newPendingBrands);
+          setHasUnsavedChanges(true);
+          
+          // Update discovery status
+          await axios.post('http://localhost:3001/api/discovery/status', {
+            brandId,
+            status: 'added_to_favorites'
+          }, {
+            headers: {
+              'Authorization': `Bearer ${authToken}`
+            }
+          });
+        } else {
+          alert('You can only have up to 10 favorite brands.');
+          return;
+        }
+      }
+      
+      // Update discovery status
+      await axios.post('http://localhost:3001/api/discovery/status', {
+        brandId,
+        status: action
+      }, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      // Update local state
+      setNewlyDiscoveredBrands(prevDiscoveries =>
+        prevDiscoveries.map(discovery =>
+          discovery.brandId === brandId
+            ? { ...discovery, status: action }
+            : discovery
+        )
+      );
+    } catch (error) {
+      console.error('Error updating discovery status:', error);
+    }
+  };
+
+  const generateNewDiscoveries = async () => {
+    try {
+      setDiscoveryLoading(true);
+      const authToken = localStorage.getItem('token');
+      
+      const response = await axios.post('http://localhost:3001/api/discovery/generate', {}, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      if (response.data.success) {
+        setNewlyDiscoveredBrands(response.data.discoveries || []);
+        alert(`Generated ${response.data.discoveries?.length || 0} new brand discoveries!`);
+      } else {
+        alert(response.data.message || 'No new discoveries available this month.');
+      }
+    } catch (error) {
+      console.error('Error generating discoveries:', error);
+      alert('Error generating new discoveries. Please try again.');
+    } finally {
+      setDiscoveryLoading(false);
+    }
+  };
+
   // Add error boundary
   if (!brandsConfig || !brandsConfig.brands) {
     return (
@@ -300,6 +407,84 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
           </div>
         )}
       </div>
+
+      {/* Newly Discovered Brands Section */}
+      {newlyDiscoveredBrands && newlyDiscoveredBrands.length > 0 && (
+        <div className="discovered-brands-section">
+          <div className="discovered-brands-header">
+            <h3>✨ Newly Discovered Brands</h3>
+            <p>Up to 3 brands discovered this month based on your style</p>
+          </div>
+          <div className="discovered-brands-grid">
+            {newlyDiscoveredBrands.map((discovery) => (
+              <div key={discovery.brandId} className={`discovered-brand-card ${discovery.status}`}>
+                <div className="discovered-brand-info">
+                  <h4>{discovery.brandInfo?.name || discovery.brandId}</h4>
+                  <p className="discovery-reason">{discovery.discoveryReason}</p>
+                  <p className="brand-description">{discovery.brandInfo?.description}</p>
+                  {discovery.trending && (
+                    <span className="trending-badge">🔥 Trending</span>
+                  )}
+                </div>
+                <div className="discovery-actions">
+                  {discovery.status === 'new' && (
+                    <>
+                      <button
+                        className="discovery-action-btn like-btn"
+                        onClick={() => handleDiscoveryAction(discovery.brandId, 'liked')}
+                      >
+                        👍 Like
+                      </button>
+                      <button
+                        className="discovery-action-btn add-btn"
+                        onClick={() => handleDiscoveryAction(discovery.brandId, 'add_to_favorites')}
+                      >
+                        ❤️ Add to Favorites
+                      </button>
+                    </>
+                  )}
+                  {discovery.status === 'liked' && (
+                    <div className="discovery-status">
+                      <span>👍 Liked</span>
+                      <button
+                        className="discovery-action-btn add-btn"
+                        onClick={() => handleDiscoveryAction(discovery.brandId, 'add_to_favorites')}
+                      >
+                        ❤️ Add to Favorites
+                      </button>
+                    </div>
+                  )}
+                  {discovery.status === 'added_to_favorites' && (
+                    <div className="discovery-status">
+                      <span>❤️ Added to Favorites</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          {discoveryLoading && (
+            <div className="discovery-loading">
+              <p>🔍 Finding new brands for you...</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Generate New Discoveries Button */}
+      {(!newlyDiscoveredBrands || newlyDiscoveredBrands.length === 0) && (
+        <div className="generate-discoveries-section">
+          <h3>✨ Discover New Brands</h3>
+          <p>Let us find new brands that match your style!</p>
+          <button
+            className="generate-discoveries-btn"
+            onClick={generateNewDiscoveries}
+            disabled={discoveryLoading}
+          >
+            {discoveryLoading ? 'Discovering...' : 'Discover New Brands'}
+          </button>
+        </div>
+      )}
 
       {showBrandSelector && (
         <div className="brand-selector-modal">

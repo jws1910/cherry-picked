@@ -63,14 +63,57 @@ const userSchema = new mongoose.Schema({
     },
     lastAnalyzed: Date
   },
-  favoriteBrands: {
-    type: [String],
-    default: [],
-    validate: {
-      validator: function(v) {
-        return v.length <= 10; // Maximum 10 favorite brands
-      },
-      message: 'Cannot have more than 10 favorite brands'
+  favoriteBrands: [{
+    type: String,
+    maxlength: 10
+  }],
+  
+  // Newly Discovered Brands Feature
+  newlyDiscoveredBrands: [{
+    brandId: {
+      type: String,
+      required: true
+    },
+    discoveredAt: {
+      type: Date,
+      default: Date.now
+    },
+    discoveryMonth: {
+      type: String, // Format: "2024-01"
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['new', 'viewed', 'liked', 'added_to_favorites'],
+      default: 'new'
+    },
+    discoveryReason: {
+      type: String, // Why this brand was suggested
+      maxlength: 200
+    },
+    trending: {
+      type: Boolean,
+      default: false
+    }
+  }],
+  
+  lastDiscoveryUpdate: {
+    type: Date,
+    default: null
+  },
+  
+  discoveryPreferences: {
+    enableMonthlyDiscovery: {
+      type: Boolean,
+      default: true
+    },
+    preferredDiscoveryTypes: [{
+      type: String,
+      enum: ['trending', 'similar_style', 'emerging', 'sustainable', 'luxury', 'affordable']
+    }],
+    discoveryNotifications: {
+      type: Boolean,
+      default: true
     }
   },
 
