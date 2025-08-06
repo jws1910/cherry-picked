@@ -406,6 +406,51 @@ body {
   margin-bottom: 1rem;
 }
 
+.brand-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.visit-store-btn,
+.brand-forum-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visit-store-btn {
+  background: #800020;
+  color: white;
+}
+
+.visit-store-btn:hover {
+  background: #600018;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
+}
+
+.brand-forum-btn {
+  background: #17a2b8;
+  color: white;
+}
+
+.brand-forum-btn:hover {
+  background: #138496;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
 
 
 .sale-percentage {
@@ -626,6 +671,17 @@ body {
 .main-tab-button.active {
   background: #800020;
   color: white;
+}
+
+.my-posts-btn {
+  background: #17a2b8 !important;
+  color: white !important;
+  border: none;
+}
+
+.my-posts-btn:hover {
+  background: #138496 !important;
+  color: white !important;
 }
 
 .main-tab-button {

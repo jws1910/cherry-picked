@@ -172,7 +172,11 @@
     },
     "new-member": {
       "name": "New Member Sale",
-      "keywords": ["sign up", "signup", "new member", "email signup", "text signup", "newsletter", "first order"]
+      "keywords": ["sign up", "signup", "new member", "email signup", "text signup", "newsletter"]
+    },
+    "first-order": {
+      "name": "First Order Deals",
+      "keywords": ["on your first order", "your first order", "first purchase", "new customer", "welcome discount", "your first", "first order"]
     },
     "black-friday": {
       "name": "Black Friday Sale",

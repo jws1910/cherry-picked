@@ -111,8 +111,18 @@ const countryConfig = JSON.parse(fs.readFileSync(countryConfigPath, 'utf8'));
 const failedBrands = new Set();
 
 // Function to detect sale category based on text
-function detectSaleCategory(text) {
+function detectSaleCategory(text, brandName = '') {
   const lowerText = text.toLowerCase();
+  const lowerBrandName = brandName.toLowerCase();
+  
+  // Special handling for first-order deals with dynamic brand name matching
+  if (brandName && lowerBrandName) {
+    // Check for "your first [brand name] order" pattern
+    const firstOrderPattern = new RegExp(`your first\\s+${lowerBrandName.replace(/\s+/g, '\\s+')}\\s+order`, 'i');
+    if (firstOrderPattern.test(text)) {
+      return 'first-order';
+    }
+  }
   
   for (const [categoryKey, category] of Object.entries(SALE_CATEGORIES)) {
     for (const keyword of category.keywords) {
@@ -298,7 +308,7 @@ async function scrapeBrand(brandKey, brandConfig) {
       }
       
       if (checkForAnySale(text)) {
-        const detectedCategory = detectSaleCategory(text);
+        const detectedCategory = detectSaleCategory(text, brandConfig.name);
         const percentage = extractSalePercentage(text);
         
         if (detectedCategory || percentage) {

@@ -295,7 +295,7 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
           <div className="add-brand-card" onClick={() => setShowBrandSelector(true)}>
             <div className="add-brand-content">
               <span className="add-icon">+</span>
-              <p>Add Brand</p>
+              <p>Manage Brands</p>
             </div>
           </div>
         )}
@@ -352,13 +352,6 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
               ))}
             </div>
             <div className="add-brand-section">
-              <button 
-                className="add-brand-btn"
-                onClick={handleAddBrandClick}
-                type="button"
-              >
-                + Add Brand
-              </button>
               {user?.role === 'customer' && (
                 <button 
                   className="request-brand-btn"

@@ -39,6 +39,10 @@ const forumPostSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  brandKey: {
+    type: String,
+    trim: true
+  },
   items: [{
     brandName: {
       type: String,
@@ -141,6 +145,29 @@ forumPostSchema.statics.getUserPosts = function(userId) {
   .populate('comments.author', 'firstName lastName profilePicture')
   .populate('likes', 'firstName lastName')
   .sort({ createdAt: -1 });
+};
+
+// Static method to get brand-specific posts for a user
+forumPostSchema.statics.getBrandPostsForUser = async function(brandKey, userId, page = 1, limit = 10) {
+  // Get user's friends list
+  const User = mongoose.model('User');
+  const user = await User.findById(userId).select('friends');
+  const friendIds = user ? user.friends : [];
+  
+  return this.find({
+    brandKey: brandKey,
+    $or: [
+      { author: userId }, // User's own posts (all privacy levels)
+      { privacy: 'public' }, // Public posts from others
+      { privacy: 'friends', author: { $in: friendIds } } // Friends-only posts from friends
+    ]
+  })
+  .populate('author', 'firstName lastName email profilePicture')
+  .populate('comments.author', 'firstName lastName profilePicture')
+  .populate('likes', 'firstName lastName')
+  .sort({ createdAt: -1 })
+  .skip((page - 1) * limit)
+  .limit(limit);
 };
 
 module.exports = mongoose.model('ForumPost', forumPostSchema); 

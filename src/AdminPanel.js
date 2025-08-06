@@ -4,25 +4,17 @@ import './AdminPanel.css';
 
 const AdminPanel = ({ onBack, user }) => {
   const [brandRequests, setBrandRequests] = useState([]);
-  const [allBrands, setAllBrands] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [adminNotes, setAdminNotes] = useState({});
   const [activeTab, setActiveTab] = useState('requests');
-  const [newBrand, setNewBrand] = useState({
-    brandName: '',
-    brandKey: '',
-    brandUrl: ''
-  });
+
 
   useEffect(() => {
-    if (activeTab === 'requests') {
-      fetchBrandRequests();
-    } else if (activeTab === 'brands') {
-      fetchAllBrands();
-    }
-  }, [activeTab]);
+    fetchBrandRequests();
+  }, []);
 
   const fetchBrandRequests = async () => {
     try {
@@ -62,27 +54,7 @@ const AdminPanel = ({ onBack, user }) => {
     }
   };
 
-  const fetchAllBrands = async () => {
-    try {
-      setLoading(true);
-      const authToken = localStorage.getItem('token');
-      
-      const response = await axios.get('http://localhost:3001/api/brands', {
-        headers: { 'Authorization': `Bearer ${authToken}` }
-      });
 
-      if (response.data.success) {
-        setAllBrands(response.data.brands);
-      } else {
-        setError('Failed to fetch brands');
-      }
-    } catch (error) {
-      console.error('Error fetching brands:', error);
-      setError('Error fetching brands');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleStatusUpdate = async (requestId, status) => {
     try {
@@ -117,28 +89,7 @@ const AdminPanel = ({ onBack, user }) => {
     }
   };
 
-  const handleAddBrand = async () => {
-    try {
-      const authToken = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:3001/api/brands', newBrand, {
-        headers: {
-          'Authorization': `Bearer ${authToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
 
-      if (response.data.success) {
-        setNewBrand({ brandName: '', brandKey: '', brandUrl: '' });
-        fetchAllBrands();
-        alert('Brand added successfully');
-      } else {
-        alert('Failed to add brand');
-      }
-    } catch (error) {
-      console.error('Error adding brand:', error);
-      alert('Error adding brand');
-    }
-  };
 
   const getStatusBadge = (status) => {
     const statusColors = {
@@ -202,12 +153,9 @@ const AdminPanel = ({ onBack, user }) => {
     <div className="admin-panel">
       <div className="admin-header">
         <div className="admin-header-left">
-          <button onClick={onBack} className="back-btn">
-            ← Back
-          </button>
           <h1>Admin Panel</h1>
         </div>
-        <button onClick={() => activeTab === 'requests' ? fetchBrandRequests() : fetchAllBrands()} className="refresh-btn">
+        <button onClick={fetchBrandRequests} className="refresh-btn">
           Refresh
         </button>
       </div>
@@ -218,12 +166,6 @@ const AdminPanel = ({ onBack, user }) => {
           onClick={() => setActiveTab('requests')}
         >
           Brand Requests ({brandRequests.length})
-        </button>
-        <button 
-          className={`admin-tab-button ${activeTab === 'brands' ? 'active' : ''}`}
-          onClick={() => setActiveTab('brands')}
-        >
-          All Brands ({allBrands.length})
         </button>
       </div>
 
@@ -343,88 +285,7 @@ const AdminPanel = ({ onBack, user }) => {
         </div>
       )}
 
-      {activeTab === 'brands' && (
-        <div className="brands-container">
-          <div className="add-brand-section">
-            <h3>Add New Brand</h3>
-            <div className="add-brand-form">
-              <div className="form-group">
-                <label>Brand Name</label>
-                <input
-                  type="text"
-                  value={newBrand.brandName}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, brandName: e.target.value }))}
-                  placeholder="Enter brand name"
-                />
-              </div>
-              <div className="form-group">
-                <label>Brand Key</label>
-                <input
-                  type="text"
-                  value={newBrand.brandKey}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, brandKey: e.target.value }))}
-                  placeholder="Enter brand key (e.g., 'reformation')"
-                />
-              </div>
-              <div className="form-group">
-                <label>Brand URL</label>
-                <input
-                  type="url"
-                  value={newBrand.brandUrl}
-                  onChange={(e) => setNewBrand(prev => ({ ...prev, brandUrl: e.target.value }))}
-                  placeholder="https://example.com"
-                />
-              </div>
-              <button onClick={handleAddBrand} className="add-brand-btn">
-                Add Brand
-              </button>
-            </div>
-          </div>
 
-          <div className="brands-list">
-            <h3>All Brands ({allBrands.length})</h3>
-            {allBrands.length === 0 ? (
-              <p>No brands found.</p>
-            ) : (
-              <div className="brands-table">
-                <div className="brands-table-header">
-                  <div className="brand-logo-header">Logo</div>
-                  <div className="brand-name-header">Brand Name</div>
-                  <div className="brand-website-header">Website</div>
-                </div>
-                <div className="brands-table-body">
-                  {allBrands.map((brand) => (
-                    <div key={brand.id} className="brand-row">
-                      <div className="brand-logo">
-                        <img 
-                          src={`/images/brands/${brand.key}-logo.png`} 
-                          alt={`${brand.name} logo`}
-                          onError={(e) => {
-                            e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'block';
-                          }}
-                        />
-                        <div className="logo-placeholder" style={{ display: 'none' }}>
-                          {brand.name.charAt(0).toUpperCase()}
-                        </div>
-                      </div>
-                      <div className="brand-name">
-                        <strong>{brand.name}</strong>
-                        <span className="brand-key">({brand.key})</span>
-                      </div>
-                      <div className="brand-website">
-                        <a href={brand.url} target="_blank" rel="noopener noreferrer">
-                          {brand.url.replace(/^https?:\/\//, '')}
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

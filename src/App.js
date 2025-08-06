@@ -17,6 +17,8 @@ import NotificationBell from './NotificationBell';
 import FriendManager from './FriendManager';
 import ChatManager from './ChatManager';
 import ForumManager from './ForumManager';
+import BrandForum from './BrandForum';
+import MyPosts from './MyPosts';
 
 function App() {
   const [allSalesData, setAllSalesData] = useState(null);
@@ -33,6 +35,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('sales');
   const [totalUnreadChats, setTotalUnreadChats] = useState(0);
   const [selectedFriendId, setSelectedFriendId] = useState(null);
+  const [selectedBrandForForum, setSelectedBrandForForum] = useState(null);
+  const [showMyPosts, setShowMyPosts] = useState(false);
 
   const checkAllSales = async () => {
     // Prevent multiple simultaneous requests
@@ -261,6 +265,26 @@ function App() {
         ) : (
           <div className="no-sale-text">No sale found</div>
         )}
+        
+        <div className="brand-actions">
+          <a 
+            href={brandData.brandUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="visit-store-btn"
+          >
+            Visit Store
+          </a>
+          <button 
+            className="brand-forum-btn"
+            onClick={() => setSelectedBrandForForum({
+              key: brandData.brandKey,
+              name: brandData.brandName
+            })}
+          >
+            Brand Forum
+          </button>
+        </div>
       </div>
     );
   };
@@ -282,6 +306,7 @@ function App() {
     const categoryNames = {
       'end-of-season': 'End of Season Sale',
       'flash-sale': 'Flash Sale',
+      'first-order': 'First Order Deals',
       'fifty-percent': '50% Off Sale',
       'forty-percent': '40% Off Sale',
       'sixty-percent': '60% Off Sale',
@@ -320,6 +345,28 @@ function App() {
   // Show admin panel if requested
   if (showAdminPanel) {
     return <AdminPanel onBack={() => setShowAdminPanel(false)} user={user} />;
+  }
+
+  // Show brand forum if requested
+  if (selectedBrandForForum) {
+    return (
+      <BrandForum 
+        brandKey={selectedBrandForForum.key}
+        brandName={selectedBrandForForum.name}
+        user={user}
+        onBack={() => setSelectedBrandForForum(null)}
+      />
+    );
+  }
+
+  // Show my posts if requested
+  if (showMyPosts) {
+    return (
+      <MyPosts 
+        user={user}
+        onBack={() => setShowMyPosts(false)}
+      />
+    );
   }
 
   return (
@@ -425,6 +472,12 @@ function App() {
                 }}
               >
                 Forum
+              </button>
+              <button 
+                className="main-tab-button my-posts-btn"
+                onClick={() => setShowMyPosts(true)}
+              >
+                📝 My Posts
               </button>
             </div>
             
