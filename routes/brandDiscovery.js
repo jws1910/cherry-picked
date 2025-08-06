@@ -52,19 +52,29 @@ router.get('/history', async (req, res) => {
 // Trigger discovery generation for current user
 router.post('/generate', async (req, res) => {
   try {
-    const discoveries = await brandDiscoveryService.generateMonthlyDiscoveries(req.user.id);
+    const result = await brandDiscoveryService.generateMonthlyDiscoveries(req.user.id);
     
-    if (!discoveries) {
+    if (!result) {
       return res.json({
         success: false,
         message: 'Discovery generation disabled or already complete for this month'
       });
     }
 
+    // Handle error responses from service
+    if (result.error) {
+      return res.json({
+        success: false,
+        error: result.error,
+        message: result.message
+      });
+    }
+
+    // Successful discovery generation
     res.json({
       success: true,
-      message: `Generated ${discoveries.length} new discoveries`,
-      discoveries
+      message: `Generated ${result.length} new discoveries`,
+      discoveries: result
     });
   } catch (error) {
     console.error('Error generating discoveries:', error);

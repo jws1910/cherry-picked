@@ -63,10 +63,16 @@ const userSchema = new mongoose.Schema({
     },
     lastAnalyzed: Date
   },
-  favoriteBrands: [{
-    type: String,
-    maxlength: 10
-  }],
+  favoriteBrands: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(v) {
+        return v.length <= 10; // Maximum 10 favorite brands
+      },
+      message: 'Cannot have more than 10 favorite brands'
+    }
+  },
   
   // Newly Discovered Brands Feature
   newlyDiscoveredBrands: [{

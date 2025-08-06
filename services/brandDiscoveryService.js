@@ -112,6 +112,19 @@ class BrandDiscoveryService {
         return null;
       }
 
+      // Check if user has style data
+      const hasStyleImages = user.styleImages && user.styleImages.length > 0;
+      const hasStyleProfile = user.styleProfile && 
+        (user.styleProfile.detectedStyles?.length > 0 || 
+         user.styleProfile.detectedColors?.length > 0);
+
+      if (!hasStyleImages && !hasStyleProfile) {
+        return {
+          error: 'MISSING_STYLE_DATA',
+          message: 'Please upload style photos to your profile to get personalized brand discoveries.'
+        };
+      }
+
       const currentMonth = this.getCurrentMonth();
       
       // Check if user already has discoveries for this month
@@ -126,6 +139,13 @@ class BrandDiscoveryService {
       // Generate new discoveries
       const newDiscoveries = await this.selectBrandsForUser(user, currentMonth);
       
+      if (newDiscoveries.length === 0) {
+        return {
+          error: 'NO_NEW_BRANDS',
+          message: 'No new brands available for discovery this month. Check back next month!'
+        };
+      }
+      
       // Add to user's discoveries
       user.newlyDiscoveredBrands = user.newlyDiscoveredBrands || [];
       user.newlyDiscoveredBrands.push(...newDiscoveries);
@@ -133,6 +153,7 @@ class BrandDiscoveryService {
 
       await user.save();
 
+      console.log(`✨ Generated ${newDiscoveries.length} new discoveries for user ${userId}`);
       return newDiscoveries;
     } catch (error) {
       console.error('Error generating monthly discoveries:', error);

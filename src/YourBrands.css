@@ -698,6 +698,25 @@
   transform: none;
 }
 
+.discovery-requirements {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(128, 0, 32, 0.05);
+  border-radius: 8px;
+  border-left: 3px solid #800020;
+}
+
+.requirements-note {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.requirements-note strong {
+  color: #800020;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .your-brands-grid {

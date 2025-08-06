@@ -321,6 +321,62 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
       setDiscoveryLoading(true);
       const authToken = localStorage.getItem('token');
       
+      // First check if user has style images
+      const profileResponse = await axios.get('http://localhost:3001/api/auth/profile', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      const userProfile = profileResponse.data.user;
+      const hasStyleImages = userProfile?.styleImages && userProfile.styleImages.length > 0;
+      const hasStyleProfile = userProfile?.styleProfile && 
+        (userProfile.styleProfile.detectedStyles?.length > 0 || 
+         userProfile.styleProfile.detectedColors?.length > 0);
+
+      // If no style data, redirect to style profile
+      if (!hasStyleImages && !hasStyleProfile) {
+        setDiscoveryLoading(false);
+        const shouldRedirect = window.confirm(
+          '🎨 To get personalized brand discoveries, we need to understand your style first!\n\n' +
+          'Upload some Pinterest photos or outfit pictures to your Style Profile, and we\'ll recommend brands that match your aesthetic.\n\n' +
+          'Would you like to go to your Style Profile now?'
+        );
+        
+        if (shouldRedirect) {
+          // Trigger style profile modal or redirect
+          if (window.location.pathname === '/') {
+            // If on main page, trigger style profile modal
+            const styleProfileBtn = document.querySelector('[data-style-profile-btn]');
+            if (styleProfileBtn) {
+              styleProfileBtn.click();
+            } else {
+              // Fallback: scroll to style profile section
+              alert('Please click the "🎨 Style Profile" button above to upload your style photos!');
+            }
+          } else {
+            // If on different page, show guidance
+            alert('Please go to your Style Profile and upload some style inspiration photos first!');
+          }
+        }
+        return;
+      }
+
+      // If user has limited style data, suggest adding more
+      if (hasStyleImages && userProfile.styleImages.length < 3) {
+        const shouldContinue = window.confirm(
+          `🎨 You have ${userProfile.styleImages.length} style photo(s) uploaded.\n\n` +
+          'For better brand recommendations, we suggest uploading at least 3-5 style photos.\n\n' +
+          'Would you like to continue with discovery anyway?'
+        );
+        
+        if (!shouldContinue) {
+          setDiscoveryLoading(false);
+          return;
+        }
+      }
+
+      // Generate discoveries
       const response = await axios.post('http://localhost:3001/api/discovery/generate', {}, {
         headers: {
           'Authorization': `Bearer ${authToken}`
@@ -329,9 +385,15 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
 
       if (response.data.success) {
         setNewlyDiscoveredBrands(response.data.discoveries || []);
-        alert(`Generated ${response.data.discoveries?.length || 0} new brand discoveries!`);
+        alert(`✨ Generated ${response.data.discoveries?.length || 0} personalized brand discoveries based on your style!`);
       } else {
-        alert(response.data.message || 'No new discoveries available this month.');
+        // Handle specific error types
+        if (response.data.error === 'MISSING_STYLE_DATA') {
+          // This shouldn't happen due to our check above, but just in case
+          alert('🎨 Please upload some style photos to your profile first to get personalized recommendations!');
+        } else {
+          alert(response.data.message || 'No new discoveries available this month.');
+        }
       }
     } catch (error) {
       console.error('Error generating discoveries:', error);
@@ -475,14 +537,19 @@ const YourBrands = ({ user, onUpdateUser, allSalesData }) => {
       {(!newlyDiscoveredBrands || newlyDiscoveredBrands.length === 0) && (
         <div className="generate-discoveries-section">
           <h3>✨ Discover New Brands</h3>
-          <p>Let us find new brands that match your style!</p>
+          <p>Upload your Pinterest photos or outfit pictures to get personalized brand recommendations that match your unique style!</p>
           <button
             className="generate-discoveries-btn"
             onClick={generateNewDiscoveries}
             disabled={discoveryLoading}
           >
-            {discoveryLoading ? 'Discovering...' : 'Discover New Brands'}
+            {discoveryLoading ? 'Analyzing Your Style...' : 'Get My Brand Discoveries'}
           </button>
+          <div className="discovery-requirements">
+            <p className="requirements-note">
+              💡 <strong>How it works:</strong> We analyze your style photos to understand your aesthetic and recommend brands that align with your taste.
+            </p>
+          </div>
         </div>
       )}
 

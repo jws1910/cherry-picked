@@ -509,6 +509,7 @@ function App() {
               <button 
                 className="main-tab-button style-profile-btn"
                 onClick={() => setShowStyleProfile(true)}
+                data-style-profile-btn="true"
               >
                 🎨 Style Profile
               </button>
