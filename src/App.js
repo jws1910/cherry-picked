@@ -19,6 +19,7 @@ import ChatManager from './ChatManager';
 import ForumManager from './ForumManager';
 import BrandForum from './BrandForum';
 import MyPosts from './MyPosts';
+import StyleProfile from './StyleProfile';
 
 function App() {
   const [allSalesData, setAllSalesData] = useState(null);
@@ -37,6 +38,7 @@ function App() {
   const [selectedFriendId, setSelectedFriendId] = useState(null);
   const [selectedBrandForForum, setSelectedBrandForForum] = useState(null);
   const [showMyPosts, setShowMyPosts] = useState(false);
+  const [showStyleProfile, setShowStyleProfile] = useState(false);
 
   const checkAllSales = async () => {
     // Prevent multiple simultaneous requests
@@ -261,6 +263,19 @@ function App() {
             <div className="sale-text">
               {brandData.saleText}
             </div>
+            {brandData.aiReasons && brandData.aiReasons.length > 0 && (
+              <div className="ai-recommendations">
+                <div className="ai-header">✨ Why we picked this for you:</div>
+                <ul className="ai-reasons">
+                  {brandData.aiReasons.slice(0, 2).map((reason, index) => (
+                    <li key={index}>{reason}</li>
+                  ))}
+                </ul>
+                {brandData.aiScore && (
+                  <div className="ai-score">Match Score: {brandData.aiScore}/100</div>
+                )}
+              </div>
+            )}
           </>
         ) : (
           <div className="no-sale-text">No sale found</div>
@@ -304,6 +319,7 @@ function App() {
 
   const getCategoryDisplayName = (categoryKey) => {
     const categoryNames = {
+      'ai-picks': 'Sales Picked Just For You',
       'end-of-season': 'End of Season Sale',
       'flash-sale': 'Flash Sale',
       'first-order': 'First Order Deals',
@@ -365,6 +381,17 @@ function App() {
       <MyPosts 
         user={user}
         onBack={() => setShowMyPosts(false)}
+      />
+    );
+  }
+
+  // Show style profile if requested
+  if (showStyleProfile) {
+    return (
+      <StyleProfile 
+        user={user}
+        onUpdateUser={setUser}
+        onBack={() => setShowStyleProfile(false)}
       />
     );
   }
@@ -478,6 +505,12 @@ function App() {
                 onClick={() => setShowMyPosts(true)}
               >
                 📝 My Posts
+              </button>
+              <button 
+                className="main-tab-button style-profile-btn"
+                onClick={() => setShowStyleProfile(true)}
+              >
+                🎨 Style Profile
               </button>
             </div>
             

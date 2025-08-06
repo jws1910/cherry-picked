@@ -33,6 +33,36 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null // URL to profile picture
   },
+  styleImages: [{
+    url: String,
+    source: {
+      type: String,
+      enum: ['upload', 'pinterest'],
+      default: 'upload'
+    },
+    pinterestData: {
+      pinId: String,
+      boardName: String,
+      description: String
+    },
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+
+  styleProfile: {
+    detectedStyles: [String],
+    colors: [String],
+    patterns: [String],
+    occasions: [String],
+    confidence: {
+      type: String,
+      enum: ['low', 'medium', 'high'],
+      default: 'low'
+    },
+    lastAnalyzed: Date
+  },
   favoriteBrands: {
     type: [String],
     default: [],

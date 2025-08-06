@@ -13,7 +13,9 @@ const notificationRoutes = require('./routes/notifications');
 const chatRoutes = require('./routes/chats');
 const forumRoutes = require('./routes/forum');
 const brandRoutes = require('./routes/brands');
+const styleRoutes = require('./routes/style');
 const brandSaleDetector = require('./services/brandSaleDetector');
+const aiRecommendationService = require('./services/aiRecommendationService');
 
 const app = express();
 const PORT = 3001;
@@ -67,6 +69,7 @@ app.use('/api/notifications', authenticateToken, notificationRoutes);
 app.use('/api/chats', authenticateToken, chatRoutes);
 app.use('/api/forum', authenticateToken, forumRoutes);
 app.use('/api/brands', authenticateToken, brandRoutes);
+app.use('/api/style', authenticateToken, styleRoutes);
 
 // Test endpoint to simulate a brand sale (for testing purposes)
 app.post('/api/test-brand-sale', authenticateToken, async (req, res) => {
@@ -610,6 +613,25 @@ app.get('/api/check-all-sales', authenticateToken, async (req, res) => {
           }
         }
       });
+
+      // Generate AI recommendations for authenticated users
+      if (req.user?.userId) {
+        try {
+          const salesWithResults = allResults.filter(result => result && result.saleFound);
+          const aiRecommendations = await aiRecommendationService.generatePersonalizedRecommendations(
+            req.user.userId, 
+            salesWithResults
+          );
+          
+          if (aiRecommendations.length > 0) {
+            categorizedResults['ai-picks'] = aiRecommendations;
+            console.log(`🤖 Generated ${aiRecommendations.length} AI recommendations for user ${req.user.userId}`);
+          }
+        } catch (aiError) {
+          console.error('Error generating AI recommendations:', aiError);
+          // Continue without AI recommendations if there's an error
+        }
+      }
       
       res.json({
         success: true,
@@ -653,6 +675,65 @@ app.get('/api/check-iro-sale', async (req, res) => {
       saleFound: false,
       saleText: '',
       salePercentage: null
+    });
+  }
+});
+
+// AI Recommendations endpoint
+app.get('/api/ai-recommendations', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    // Get current sales data
+    const salesResponse = await checkAllSales();
+    const availableSales = salesResponse.results?.filter(result => result && result.saleFound) || [];
+    
+    // Generate personalized recommendations
+    const recommendations = await aiRecommendationService.generatePersonalizedRecommendations(userId, availableSales);
+    
+    // Get user's style description
+    const styleDescription = await aiRecommendationService.generateStyleDescription(userId);
+    
+    res.json({
+      success: true,
+      recommendations,
+      styleDescription,
+      totalRecommendations: recommendations.length,
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Error generating AI recommendations:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error generating recommendations',
+      error: error.message
+    });
+  }
+});
+
+// Update AI preferences based on user interaction
+app.post('/api/ai-interaction', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { action, brandKey, reasons } = req.body;
+    
+    await aiRecommendationService.updatePreferencesFromInteraction(userId, {
+      action,
+      brandKey,
+      reasons
+    });
+    
+    res.json({
+      success: true,
+      message: 'Interaction recorded'
+    });
+    
+  } catch (error) {
+    console.error('Error recording AI interaction:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error recording interaction'
     });
   }
 });

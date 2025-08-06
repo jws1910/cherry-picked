@@ -131,7 +131,7 @@
 }
 
 .unread-badge {
-  background: #ff4757;
+  background: #800020;
   color: white;
   border-radius: 50%;
   width: 20px;
@@ -338,7 +338,7 @@
 }
 
 .send-button:disabled {
-  background: #ccc;
+  background: rgba(128, 0, 32, 0.3);
   cursor: not-allowed;
   transform: none;
 }
@@ -474,6 +474,6 @@
 }
 
 .brand-question-actions button:last-child {
-  background: #6c757d;
+  background: black;
   color: white;
 } 

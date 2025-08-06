@@ -23,6 +23,7 @@ const SaleTypeMenu = ({ selectedSaleType, onSaleTypeChange, allSalesData }) => {
     
     // Check which categories actually have sales
     const categoryMapping = {
+      'ai-picks': { label: 'Sales Picked For You', icon: '✨', order: 0 },
       'flash-sale': { label: 'Flash Sales', icon: '⚡', order: 1 },
       'end-of-season': { label: 'End of Season', icon: '🏁', order: 2 },
       'first-order': { label: 'First Order Deals', icon: '🆕', order: 3 },
