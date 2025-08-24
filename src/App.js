@@ -433,14 +433,18 @@ function App() {
           </>
         ) : (
           <div className="header-actions">
-            <NotificationBell />
-            <button 
-              className="admin-btn"
-              onClick={() => setShowAdminPanel(true)}
-              title="Admin Panel"
-            >
-              Admin
-            </button>
+            {user?.role === 'admin' && (
+              <>
+                <NotificationBell />
+                <button 
+                  className="admin-btn"
+                  onClick={() => setShowAdminPanel(true)}
+                  title="Admin Panel"
+                >
+                  Admin
+                </button>
+              </>
+            )}
             <button 
               className="logout-btn"
               onClick={handleLogout}

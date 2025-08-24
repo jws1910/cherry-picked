@@ -49,6 +49,9 @@ const SaleTypeMenu = ({ selectedSaleType, onSaleTypeChange, allSalesData }) => {
 
     console.log('🔍 Checking categories:', Object.keys(allSalesData.categorizedResults));
     
+    // Track unmapped categories to group them together
+    const unmappedCategories = [];
+    
     Object.entries(allSalesData.categorizedResults).forEach(([categoryKey, sales]) => {
       console.log(`🔍 Category ${categoryKey}:`, sales?.length, 'sales');
       if (sales && sales.length > 0 && categoryMapping[categoryKey]) {
@@ -61,15 +64,24 @@ const SaleTypeMenu = ({ selectedSaleType, onSaleTypeChange, allSalesData }) => {
         });
       } else if (sales && sales.length > 0) {
         console.log(`⚠️ Category ${categoryKey} has ${sales.length} sales but no mapping`);
-        // Add unmapped categories as "Other Sales" at the end
-        availableTypes.push({
+        // Collect unmapped categories to group them later
+        unmappedCategories.push({
           key: categoryKey,
-          label: 'Other Sales',
-          icon: '📦',
-          order: 999 // High order to put at end
+          sales: sales
         });
       }
     });
+
+    // Add a single "Other Sales" category for all unmapped categories
+    if (unmappedCategories.length > 0) {
+      console.log(`📦 Grouping ${unmappedCategories.length} unmapped categories into "Other Sales"`);
+      availableTypes.push({
+        key: 'other-sales',
+        label: 'Other Sales',
+        icon: '📦',
+        order: 999 // High order to put at end
+      });
+    }
 
     // Sort by order, with "All Sales" always first
     availableTypes.sort((a, b) => {

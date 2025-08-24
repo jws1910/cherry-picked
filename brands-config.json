@@ -197,6 +197,10 @@
     "summer": {
       "name": "Summer Sale",
       "keywords": ["summer sale", "summer clearance", "summer discount"]
+    },
+    "labor-day": {
+      "name": "Labor Day Sale",
+      "keywords": ["labor day", "labour day", "labor day event", "labour day event", "long weekend", "longweekend"]
     }
   },
   "schedule": {

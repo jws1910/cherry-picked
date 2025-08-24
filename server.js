@@ -181,7 +181,7 @@ async function scrapeBrand(brandKey, brandConfig) {
   try {
     // Skip brands that consistently timeout or block requests
     const blockedBrands = [
-      'cos', 'arket', 'otherstories', 'h&m', 'madewell', 'uniqlo', 'mango',
+      'cos', 'arket', 'otherstories', 'h&m', 'uniqlo', 'mango',
       'ganni', 'acne', 'theory', 'massimodutti', 'nanushka'
     ];
     

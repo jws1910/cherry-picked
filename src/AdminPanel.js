@@ -149,15 +149,29 @@ const AdminPanel = ({ onBack, user }) => {
     );
   }
 
+  const handleLogout = () => {
+    // Clear authentication data
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Redirect to login page
+    window.location.href = '/';
+  };
+
   return (
     <div className="admin-panel">
       <div className="admin-header">
         <div className="admin-header-left">
           <h1>Admin Panel</h1>
         </div>
-        <button onClick={fetchBrandRequests} className="refresh-btn">
-          Refresh
-        </button>
+        <div className="admin-header-right">
+          <button onClick={fetchBrandRequests} className="refresh-btn">
+            Refresh
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="admin-tabs">

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry Picked Mobile Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+            background: #FFFFFF;
+            overflow-x: hidden;
+        }
+
+        .mobile-frame {
+            width: 393px;
+            height: 852px;
+            background: linear-gradient(180deg, #FFFFFF 0%, rgba(128, 0, 32, 0.05) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            height: 60%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 59px;
+            padding-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 48px;
+            color: #800020;
+            margin-bottom: 40px;
+        }
+
+        .main-heading {
+            font-size: 32px;
+            font-weight: 700;
+            color: #800020;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 320px;
+            margin-bottom: 16px;
+        }
+
+        .subheading {
+            font-size: 20px;
+            font-weight: 400;
+            color: #666666;
+            text-align: center;
+            line-height: 1.4;
+            max-width: 280px;
+            margin-bottom: 32px;
+        }
+
+        .cta-button {
+            background: #800020;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 280px;
+            height: 56px;
+            margin-bottom: 24px;
+            box-shadow: 0px 4px 12px rgba(128, 0, 32, 0.3);
+            cursor: pointer;
+        }
+
+        .app-store-buttons {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .store-badge {
+            width: 120px;
+            height: 44px;
+            background: #000000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .phone-mockup {
+            width: 280px;
+            height: 560px;
+            background: #000000;
+            border-radius: 24px;
+            position: relative;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .phone-screen {
+            width: 260px;
+            height: 540px;
+            background: #FFFFFF;
+            border-radius: 16px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            overflow: hidden;
+        }
+
+        .app-header {
+            height: 60px;
+            background: #800020;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .app-content {
+            padding: 16px;
+        }
+
+        .brand-card {
+            background: #F8F8F8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #800020;
+        }
+
+        .brand-name {
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .sale-text {
+            font-size: 14px;
+            color: #800020;
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        .features-section {
+            height: 30%;
+            padding: 24px;
+            background: #FFFFFF;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #800020;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .feature-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            color: #800020;
+            width: 32px;
+            text-align: center;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.4;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            height: 10%;
+            background: linear-gradient(180deg, #800020 0%, #600018 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cta-heading {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .download-button {
+            background: #FFFFFF;
+            color: #800020;
+            border: none;
+            border-radius: 16px;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 280px;
+            height: 56px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .trust-indicators {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 430px) {
+            .mobile-frame {
+                transform: scale(1.1);
+            }
+        }
+
+        @media (max-width: 390px) {
+            .mobile-frame {
+                transform: scale(0.95);
+            }
+        }
+
+        @media (max-width: 375px) {
+            .mobile-frame {
+                transform: scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-frame">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="logo">🍒</div>
+            <h1 class="main-heading">Discover Your Perfect Style, One Sale at a Time</h1>
+            <p class="subheading">Never miss a deal from your favorite fashion brands</p>
+            <button class="cta-button">Get Started Free</button>
+            
+            <div class="app-store-buttons">
+                <div class="store-badge">App Store</div>
+                <div class="store-badge">Google Play</div>
+            </div>
+            
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <div class="app-header">Cherry Picked</div>
+                    <div class="app-content">
+                        <div class="brand-card">
+                            <div class="brand-name">IRO Paris</div>
+                            <div class="sale-text">Up to 50% Off - Flash Sale</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">Reformation</div>
+                            <div class="sale-text">End of Season Sale - 40% Off</div>
+                        </div>
+                        <div class="brand-card">
+                            <div class="brand-name">Sandro</div>
+                            <div class="sale-text">✨ AI Pick: Matches your style</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h2 class="section-title">Why Choose Cherry Picked?</h2>
+            
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-content">
+                    <div class="feature-title">Smart Sale Detection</div>
+                    <div class="feature-description">Never miss a deal from your favorite brands</div>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-content">
+                    <div class="feature-title">AI Style Recommendations</div>
+                    <div class="feature-description">Personalized picks based on your unique style</div>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <div class="feature-content">
+                    <div class="feature-title">Social Shopping</div>
+                    <div class="feature-description">Share and discover with fashion-forward friends</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h3 class="cta-heading">Ready to Transform Your Shopping Experience?</h3>
+            <button class="download-button">Download Now</button>
+            <div class="trust-indicators">Free • No Ads • Privacy First</div>
+        </div>
+    </div>
+</body>
+</html> 

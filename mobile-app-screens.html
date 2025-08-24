@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry Picked Mobile App Screens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+            background: #F8F8F8;
+            padding: 20px;
+        }
+
+        .screen-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .mobile-screen {
+            width: 393px;
+            height: 852px;
+            background: #FFFFFF;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 59px;
+            background: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        .top-nav {
+            height: 60px;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .nav-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000000;
+        }
+
+        .nav-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        /* Bottom Tab Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 83px;
+            background: #FFFFFF;
+            border-top: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 34px; /* Home indicator space */
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: #666666;
+        }
+
+        .tab-item.active {
+            color: #800020;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        /* Content Area */
+        .content {
+            height: calc(852px - 59px - 60px - 83px);
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* Sales Screen */
+        .category-tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            background: #F8F8F8;
+            border-radius: 20px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .category-tab.active {
+            background: #800020;
+            color: #FFFFFF;
+        }
+
+        .brand-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            background: #F8F8F8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .brand-info {
+            flex: 1;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .sale-text {
+            font-size: 14px;
+            color: #800020;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .brand-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .primary-button {
+            background: #800020;
+            color: #FFFFFF;
+        }
+
+        .secondary-button {
+            background: #F8F8F8;
+            color: #666666;
+        }
+
+        /* Friends Screen */
+        .friend-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .friend-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .friend-stats {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        /* Forum Screen */
+        .post-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .post-author {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .post-content {
+            font-size: 16px;
+            color: #000000;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            color: #666666;
+        }
+
+        /* Chat Screen */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .chat-preview {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        /* Profile Screen */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 8px;
+        }
+
+        .profile-email {
+            font-size: 16px;
+            color: #666666;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #800020;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .settings-label {
+            font-size: 16px;
+            color: #000000;
+        }
+
+        .settings-value {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        /* Admin Panel */
+        .admin-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 12px;
+            background: #F8F8F8;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .admin-tab.active {
+            background: #800020;
+            color: #FFFFFF;
+        }
+
+        .request-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .request-brand {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000000;
+        }
+
+        .request-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-new {
+            background: #ffc107;
+            color: #000000;
+        }
+
+        .status-progress {
+            background: #17a2b8;
+            color: #FFFFFF;
+        }
+
+        .status-added {
+            background: #28a745;
+            color: #FFFFFF;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* Notifications */
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: #F8F8F8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000000;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-16 { margin-bottom: 16px; }
+        .mb-24 { margin-bottom: 24px; }
+        .mt-16 { margin-top: 16px; }
+        .mt-24 { margin-top: 24px; }
+    </style>
+</head>
+<body>
+    <div class="screen-container">
+        <!-- Sales Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">🔍</div>
+                <div class="nav-title">Sales Feed</div>
+                <div class="nav-button">🔔</div>
+            </div>
+            <div class="content">
+                <div class="category-tabs">
+                    <div class="category-tab active">All Sales</div>
+                    <div class="category-tab">AI Picks</div>
+                    <div class="category-tab">Flash Sales</div>
+                    <div class="category-tab">End of Season</div>
+                </div>
+                
+                <div class="brand-card">
+                    <div class="brand-logo">🛍️</div>
+                    <div class="brand-info">
+                        <div class="brand-name">IRO Paris</div>
+                        <div class="sale-text">Up to 50% Off - Flash Sale</div>
+                        <div class="brand-actions">
+                            <button class="action-button primary-button">Shop Now</button>
+                            <button class="action-button secondary-button">❤️</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brand-card">
+                    <div class="brand-logo">👗</div>
+                    <div class="brand-info">
+                        <div class="brand-name">Reformation</div>
+                        <div class="sale-text">End of Season Sale - 40% Off</div>
+                        <div class="brand-actions">
+                            <button class="action-button primary-button">Shop Now</button>
+                            <button class="action-button secondary-button">❤️</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="brand-card">
+                    <div class="brand-logo">✨</div>
+                    <div class="brand-info">
+                        <div class="brand-name">Sandro</div>
+                        <div class="sale-text">✨ AI Pick: Matches your style</div>
+                        <div class="brand-actions">
+                            <button class="action-button primary-button">Shop Now</button>
+                            <button class="action-button secondary-button">❤️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item active">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👤</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friends Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Friends</div>
+                <div class="nav-button">+</div>
+            </div>
+            <div class="content">
+                <div class="friend-card">
+                    <div class="friend-avatar">👤</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Jen Shin</div>
+                        <div class="friend-stats">8 favorite brands</div>
+                    </div>
+                    <div class="brand-actions">
+                        <button class="action-button secondary-button">View Brands</button>
+                        <button class="action-button primary-button">Chat</button>
+                    </div>
+                </div>
+                
+                <div class="friend-card">
+                    <div class="friend-avatar">👤</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Sarah Kim</div>
+                        <div class="friend-stats">12 favorite brands</div>
+                    </div>
+                    <div class="brand-actions">
+                        <button class="action-button secondary-button">View Brands</button>
+                        <button class="action-button primary-button">Chat</button>
+                    </div>
+                </div>
+                
+                <div class="friend-card">
+                    <div class="friend-avatar">👤</div>
+                    <div class="friend-info">
+                        <div class="friend-name">Mike Chen</div>
+                        <div class="friend-stats">5 favorite brands</div>
+                    </div>
+                    <div class="brand-actions">
+                        <button class="action-button secondary-button">View Brands</button>
+                        <button class="action-button primary-button">Chat</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👤</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forum Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Style Forum</div>
+                <div class="nav-button">+</div>
+            </div>
+            <div class="content">
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar">👤</div>
+                        <div class="post-meta">
+                            <div class="post-author">Jen Shin</div>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Just got this amazing dress from @IRO Paris! The sale was incredible and it fits perfectly. Perfect for summer evenings! 🌸
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">❤️ 24</div>
+                        <div class="post-action">💬 8</div>
+                        <div class="post-action">📤 Share</div>
+                    </div>
+                </div>
+                
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar">👤</div>
+                        <div class="post-meta">
+                            <div class="post-author">Sarah Kim</div>
+                            <div class="post-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Loving my new @Reformation pieces! The end of season sale was too good to pass up. Sustainable fashion that looks amazing! ✨
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">❤️ 18</div>
+                        <div class="post-action">💬 5</div>
+                        <div class="post-action">📤 Share</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👤</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Chats</div>
+                <div class="nav-button">+</div>
+            </div>
+            <div class="content">
+                <div class="chat-list">
+                    <div class="chat-item">
+                        <div class="chat-avatar">👤</div>
+                        <div class="chat-info">
+                            <div class="chat-name">Jen Shin</div>
+                            <div class="chat-preview">Did you see the IRO sale? It's amazing!</div>
+                        </div>
+                        <div class="chat-time">2m</div>
+                    </div>
+                    
+                    <div class="chat-item">
+                        <div class="chat-avatar">👤</div>
+                        <div class="chat-info">
+                            <div class="chat-name">Sarah Kim</div>
+                            <div class="chat-preview">Thanks for the Reformation recommendation!</div>
+                        </div>
+                        <div class="chat-time">1h</div>
+                    </div>
+                    
+                    <div class="chat-item">
+                        <div class="chat-avatar">👤</div>
+                        <div class="chat-info">
+                            <div class="chat-name">Mike Chen</div>
+                            <div class="chat-preview">What do you think about Sandro?</div>
+                        </div>
+                        <div class="chat-time">3h</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👤</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Profile</div>
+                <div class="nav-button">✏️</div>
+            </div>
+            <div class="content">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-name">Alex Johnson</div>
+                    <div class="profile-email">alex@example.com</div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Friends</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Brands</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Posts</div>
+                    </div>
+                </div>
+                
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="settings-label">Account Settings</div>
+                        <div class="settings-value">></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Privacy Settings</div>
+                        <div class="settings-value">></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Notifications</div>
+                        <div class="settings-value">></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Discovery Preferences</div>
+                        <div class="settings-value">></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-label">Logout</div>
+                        <div class="settings-value" style="color: #dc3545;">></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">👤</div>
+                    <div>Profile</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Admin Panel</div>
+                <div class="nav-button">🚪</div>
+            </div>
+            <div class="content">
+                <div class="admin-tabs">
+                    <div class="admin-tab active">Requests</div>
+                    <div class="admin-tab">Users</div>
+                    <div class="admin-tab">Analytics</div>
+                </div>
+                
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-brand">New Brand Request</div>
+                        <div class="request-status status-new">New</div>
+                    </div>
+                    <div class="friend-stats">Requested by: user@example.com</div>
+                    <div class="friend-stats">Date: 2024-01-15</div>
+                    <div class="request-actions">
+                        <button class="action-button primary-button">Approve</button>
+                        <button class="action-button secondary-button">Reject</button>
+                    </div>
+                </div>
+                
+                <div class="request-card">
+                    <div class="request-header">
+                        <div class="request-brand">Brand Update</div>
+                        <div class="request-status status-progress">In Progress</div>
+                    </div>
+                    <div class="friend-stats">Updated by: admin@example.com</div>
+                    <div class="friend-stats">Date: 2024-01-14</div>
+                    <div class="request-actions">
+                        <button class="action-button primary-button">Mark Complete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">⚙️</div>
+                    <div>Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Screen -->
+        <div class="mobile-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋</span>
+            </div>
+            <div class="top-nav">
+                <div class="nav-button">←</div>
+                <div class="nav-title">Notifications</div>
+                <div class="nav-button">✓</div>
+            </div>
+            <div class="content">
+                <div class="notification-item">
+                    <div class="notification-icon">🛍️</div>
+                    <div class="notification-content">
+                        <div class="notification-title">IRO Paris is on sale!</div>
+                        <div class="notification-message">Up to 50% off selected items</div>
+                        <div class="notification-time">2 minutes ago</div>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">👥</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Jen Shin wants to be friends</div>
+                        <div class="notification-message">You have 8 mutual friends</div>
+                        <div class="notification-time">1 hour ago</div>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">✨</div>
+                    <div class="notification-content">
+                        <div class="notification-title">3 new brands discovered for you</div>
+                        <div class="notification-message">Based on your style preferences</div>
+                        <div class="notification-time">3 hours ago</div>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">💬</div>
+                    <div class="notification-content">
+                        <div class="notification-title">Someone liked your post</div>
+                        <div class="notification-message">Sarah Kim liked your Reformation post</div>
+                        <div class="notification-time">5 hours ago</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div class="tab-item">
+                    <div class="tab-icon">🛍️</div>
+                    <div>Sales</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">👥</div>
+                    <div>Friends</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💬</div>
+                    <div>Forum</div>
+                </div>
+                <div class="tab-item">
+                    <div class="tab-icon">💭</div>
+                    <div>Chat</div>
+                </div>
+                <div class="tab-item active">
+                    <div class="tab-icon">🔔</div>
+                    <div>Notifications</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
